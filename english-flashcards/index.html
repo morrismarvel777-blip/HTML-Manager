@@ -189,6 +189,9 @@
 
   .card.flipped { transform: rotateY(180deg); }
 
+  /* Navigation swaps to the next front without playing a reverse flip first. */
+  .card.no-flip-transition { transition: none !important; }
+
   .face {
     position: absolute;
     inset: 0;
@@ -619,7 +622,7 @@ function expectedAnswer() {
   return frontLanguage === "en" ? cards[realIndex][1] : cards[realIndex][0];
 }
 
-function render() {
+function render(options = {}) {
   const active = activeIndexes();
 
   if (!active.length) {
@@ -630,7 +633,7 @@ function render() {
     $("sideInfo").textContent = "Keine Karten ausgewählt";
     $("counter").textContent = "0 / 0";
     $("progressBar").style.width = "0%";
-    cardEl.classList.remove("flipped");
+    resetCardFace(options.instantFace);
     answerInput.value = "";
     $("result").textContent = "";
     $("result").className = "result";
@@ -656,7 +659,7 @@ function render() {
   $("counter").textContent = `${index + 1} / ${active.length}`;
   $("progressBar").style.width = `${((index + 1) / active.length) * 100}%`;
 
-  cardEl.classList.remove("flipped");
+  resetCardFace(options.instantFace);
   answerInput.value = "";
   $("result").textContent = "";
   $("result").className = "result";
@@ -664,6 +667,12 @@ function render() {
   updateMarkedUI();
 
   if (testMode) setTimeout(() => answerInput.focus(), 80);
+}
+
+function resetCardFace(instant = false) {
+  if (instant) cardEl.classList.add("no-flip-transition");
+  cardEl.classList.remove("flipped");
+  if (instant) requestAnimationFrame(() => cardEl.classList.remove("no-flip-transition"));
 }
 
 function setFrontLanguage(lang) {
@@ -705,7 +714,7 @@ function next() {
   const active = activeIndexes();
   if (!active.length) return;
   index = (index + 1) % active.length;
-  render();
+  render({ instantFace: true });
   animateCardChange("next");
 }
 
@@ -713,7 +722,7 @@ function prev() {
   const active = activeIndexes();
   if (!active.length) return;
   index = (index - 1 + active.length) % active.length;
-  render();
+  render({ instantFace: true });
   animateCardChange("prev");
 }
 
