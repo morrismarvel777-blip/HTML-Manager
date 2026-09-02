@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bin&auml;r, Dezimal, Hexadezimal - Lernwebsite</title>
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("binary-learning-theme");
+      document.documentElement.dataset.theme = savedTheme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    } catch (_) {}
+  </script>
   <style>
     :root {
       --bg: #070c14;
@@ -686,6 +692,367 @@
       color: var(--muted);
     }
 
+    /* Modernes, ruhiges Interface im Stil aktueller Apple-Systemoberflaechen */
+    :root {
+      color-scheme: light;
+      --bg: #f5f5f7;
+      --bg-2: #eef1f5;
+      --paper: #ffffff;
+      --paper-2: #f7f7f9;
+      --ink: #1d1d1f;
+      --muted: #6e6e73;
+      --accent: #0071e3;
+      --accent-2: #0066cc;
+      --ok: #16803a;
+      --warn: #a66300;
+      --bad: #c9342f;
+      --line: rgba(29, 29, 31, 0.1);
+      --surface: rgba(255, 255, 255, 0.82);
+      --surface-solid: #ffffff;
+      --surface-soft: #f5f5f7;
+      --field: #ffffff;
+      --hero: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(246, 248, 252, 0.9));
+      --shadow: 0 18px 55px rgba(33, 42, 58, 0.09);
+      --shadow-soft: 0 8px 26px rgba(33, 42, 58, 0.065);
+      --radius: 28px;
+      --radius-sm: 16px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --serif: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #000000;
+      --bg-2: #101012;
+      --paper: #1c1c1e;
+      --paper-2: #242426;
+      --ink: #f5f5f7;
+      --muted: #a1a1a6;
+      --accent: #2997ff;
+      --accent-2: #64b5ff;
+      --ok: #4bd267;
+      --warn: #ffb340;
+      --bad: #ff6961;
+      --line: rgba(255, 255, 255, 0.12);
+      --surface: rgba(28, 28, 30, 0.82);
+      --surface-solid: #1c1c1e;
+      --surface-soft: #2c2c2e;
+      --field: #111113;
+      --hero: linear-gradient(145deg, rgba(30, 30, 33, 0.97), rgba(14, 18, 26, 0.94));
+      --shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    body {
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at 18% -10%, rgba(41, 151, 255, 0.12), transparent 34rem),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      padding: 24px 0 80px;
+    }
+
+    .hero {
+      color: var(--ink);
+      background: var(--hero);
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      padding: clamp(24px, 5vw, 52px);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(24px) saturate(1.25);
+    }
+
+    .hero::after {
+      inset: -90px -70px auto auto;
+      width: 270px;
+      height: 270px;
+      background: radial-gradient(circle, rgba(0, 113, 227, 0.18), transparent 68%);
+      filter: none;
+    }
+
+    .hero h1 {
+      max-width: 760px;
+      font-weight: 750;
+      font-size: clamp(2.15rem, 5vw, 4.25rem);
+      letter-spacing: -0.055em;
+    }
+
+    .hero p,
+    .hero .stat span {
+      color: var(--muted);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      opacity: 1;
+      letter-spacing: 0.12em;
+    }
+
+    .hero-actions {
+      align-items: center;
+    }
+
+    .theme-toggle {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface-soft);
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.25s ease;
+    }
+
+    .theme-toggle:hover { transform: scale(1.05); }
+    .theme-toggle svg { width: 20px; height: 20px; }
+    .theme-toggle .moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .sun { display: none; }
+    html[data-theme="dark"] .theme-toggle .moon { display: block; }
+
+    .btn,
+    .tiny-btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-family: var(--sans);
+      font-weight: 650;
+      cursor: pointer;
+      transition: transform 0.18s ease, filter 0.18s ease, background 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .btn:hover,
+    .tiny-btn:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .btn:active,
+    .tiny-btn:active { transform: scale(0.98); }
+
+    .btn.primary,
+    .tiny-btn {
+      color: #fff;
+      background: var(--accent);
+      box-shadow: 0 7px 18px rgba(0, 113, 227, 0.2);
+    }
+
+    .btn.secondary,
+    .tiny-btn.secondary {
+      color: var(--ink);
+      background: var(--surface-soft);
+      border-color: var(--line);
+      box-shadow: none;
+    }
+
+    .hero-stats { margin-top: 34px; }
+    .stat {
+      color: var(--ink);
+      background: var(--surface-soft);
+      border-color: var(--line);
+      border-radius: 20px;
+      backdrop-filter: none;
+    }
+
+    .section {
+      margin-top: 20px;
+      background: var(--surface);
+      border-color: var(--line);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(24px) saturate(1.25);
+      padding: clamp(20px, 3vw, 30px);
+    }
+
+    .section-header { align-items: center; }
+    .section-header h2 { font-size: clamp(1.45rem, 3vw, 2rem); letter-spacing: -0.035em; }
+    .goal,
+    .card,
+    .exercise {
+      color: var(--ink);
+      background: var(--surface-solid);
+      border-color: var(--line);
+      box-shadow: none;
+    }
+
+    .goal,
+    .card,
+    .exercise,
+    details { transition: transform 0.2s ease, border-color 0.25s ease, background 0.25s ease; }
+    .card:hover,
+    .exercise:hover { border-color: rgba(0, 113, 227, 0.28); }
+
+    .formula,
+    details,
+    .chip,
+    .result-box,
+    .solution {
+      color: var(--ink);
+      background: var(--surface-soft);
+      border-color: var(--line);
+    }
+
+    .tool-panel,
+    .paper-area {
+      color: var(--ink);
+      background: var(--surface-soft);
+      border-color: var(--line);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea,
+    .digit-input {
+      color: var(--ink);
+      background: var(--field);
+      border-color: var(--line);
+    }
+
+    textarea {
+      background: var(--field);
+      line-height: 1.55;
+    }
+
+    .digit-slot {
+      color: var(--ink);
+      background: var(--surface-solid);
+      border-color: var(--line);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus,
+    .digit-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.14);
+    }
+
+    .math-rule { background: var(--line); }
+    .progress-bar { background: var(--surface-soft); border-color: var(--line); }
+    .progress-fill { background: var(--accent); }
+
+    .theory-intro {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .theory-path {
+      display: flex;
+      gap: 11px;
+      align-items: center;
+      padding: 13px;
+      border-radius: 18px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .theory-path b {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .theory-card { display: flex; flex-direction: column; gap: 10px; }
+    .theory-card h3,
+    .theory-card p { margin: 0; }
+    .theory-card .formula { margin-top: auto; }
+    .theory-steps { margin: 0; padding-left: 1.25rem; }
+    .theory-steps li { margin: 0.35rem 0; }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      font: 650 0.9rem/1.25 var(--mono);
+    }
+
+    .rule-grid span {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: var(--surface-soft);
+    }
+
+    .carry-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: max-content;
+      min-width: 100%;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .carry-add-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      color: var(--accent-2);
+      background: var(--surface-solid);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .math-board .row,
+    .math-grid .row {
+      grid-auto-columns: 2.45rem;
+      gap: 6px;
+    }
+
+    .digit-slot,
+    .digit-input {
+      width: 2.45rem;
+      height: 2.45rem;
+      border-radius: 11px;
+    }
+
+    .carry-input {
+      font-size: 0.72rem;
+      letter-spacing: -0.05em;
+    }
+
+    .carry-row::before {
+      content: "↗";
+      width: 2.15rem;
+      text-align: center;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .exercise-toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
+    .new-exercise-btn { margin-left: auto; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
     @media (max-width: 980px) {
       .tool, .grid-2, .grid-3, .exercises, .goals, .hero-stats {
         grid-template-columns: 1fr;
@@ -709,6 +1076,10 @@
       }
 
       .answers, .answers.three {
+        grid-template-columns: 1fr;
+      }
+
+      .theory-intro {
         grid-template-columns: 1fr;
       }
     }
@@ -742,17 +1113,20 @@
     <header class="hero">
       <div class="hero-top">
         <div>
-          <p class="eyebrow">Bin&auml;r - Dezimal - Hexadezimal</p>
-          <h1>Lernwebsite mit Theorie, Rechenwegen und Aufgaben</h1>
+          <p class="eyebrow">Mathematik 1.1 &middot; Zahlensysteme</p>
+          <h1>Bin&auml;r wirklich verstehen.</h1>
           <p>
-            Diese Seite ist wie ein digitales Arbeitsblatt aufgebaut: kurze Erkl&auml;rungen,
-            schriftliche Verfahren zum Ausf&uuml;llen, Umwandlungen zwischen den Zahlensystemen
-            und Aufgaben, die du direkt l&ouml;sen und pr&uuml;fen kannst.
+            Klare Theorie, nachvollziehbare Rechenwege und bei jedem Klick eine neue Aufgabe.
+            Lerne Bin&auml;r, Dezimal und Hexadezimal in deinem Tempo.
           </p>
         </div>
         <div class="hero-actions">
-          <button class="btn primary" type="button" onclick="window.print()">Seite drucken</button>
-          <button class="btn secondary" type="button" id="resetAllBtn">Alle L&ouml;sungen l&ouml;schen</button>
+          <button class="theme-toggle" type="button" id="themeToggle" aria-label="Darstellung wechseln" title="Hell oder dunkel">
+            <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
+            <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path></svg>
+          </button>
+          <button class="btn secondary" type="button" onclick="window.print()">Drucken</button>
+          <button class="btn primary" type="button" id="resetAllBtn">Neu starten</button>
         </div>
       </div>
 
@@ -763,11 +1137,11 @@
         </div>
         <div class="stat">
           <strong>Schriftlich</strong>
-          <span>Addition, Multiplikation, Reste und Verschiebung wie auf Papier.</span>
+          <span>Mit &Uuml;bertr&auml;gen, Teilprodukten und allen Zwischenschritten.</span>
         </div>
         <div class="stat">
-          <strong>Ohne Hilfsmittel</strong>
-          <span>Passt f&uuml;r die Pr&uuml;fungsvorbereitung und das freie &Uuml;ben.</span>
+          <strong>Immer neu</strong>
+          <span>Jeder Aufgabentyp kann beliebig oft neu generiert werden.</span>
         </div>
       </div>
     </header>
@@ -791,48 +1165,81 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="theorie">
       <div class="section-header">
         <div>
-          <h2>Kurztheorie zum Merken</h2>
-          <p>Wie auf den Bl&auml;ttern: erst die Idee, dann das Beispiel, dann die Rechenregel.</p>
+          <h2>Theorie, die logisch aufgebaut ist</h2>
+          <p>Verstehe zuerst die Stellenwerte, lerne dann den Rechenweg und kontrolliere ihn am Beispiel.</p>
         </div>
       </div>
+      <div class="theory-intro" aria-label="Empfohlener Lernweg">
+        <div class="theory-path"><b>1</b><span>Stellenwerte und Basis verstehen</span></div>
+        <div class="theory-path"><b>2</b><span>Rechenweg Schritt f&uuml;r Schritt anwenden</span></div>
+        <div class="theory-path"><b>3</b><span>Mit einer neuen Aufgabe kontrollieren</span></div>
+      </div>
       <div class="grid-2">
-        <article class="card">
-          <h3>1. Dezimalsystem</h3>
-          <p>
-            Das Dezimalsystem benutzt die Ziffern 0 bis 9. Jede Stelle steht f&uuml;r eine Potenz von 10.
-          </p>
-          <div class="formula">538 = 5 x 10^2 + 3 x 10^1 + 8 x 10^0</div>
-          <p class="muted">Merkregel: Jede Stelle hat einen Wert, der von ihrer Position abh&auml;ngt.</p>
+        <article class="card theory-card">
+          <h3>Stellenwerte: Das Grundprinzip</h3>
+          <p>Die Basis bestimmt die erlaubten Ziffern und die Stellenwerte. Von rechts beginnt jede Zahl mit der Potenz 0.</p>
+          <div class="formula">Dezimal (Basis 10): 1, 10, 100, 1000, ...
+Bin&auml;r (Basis 2):     1,  2,   4,    8, 16, ...
+Hex (Basis 16):       1, 16, 256, 4096, ...</div>
+          <p><b>Beispiel:</b> 538<sub>10</sub> = 5 &times; 10<sup>2</sup> + 3 &times; 10<sup>1</sup> + 8 &times; 10<sup>0</sup>.</p>
         </article>
 
-        <article class="card">
-          <h3>2. Bin&auml;rsystem</h3>
-          <p>
-            Computer arbeiten mit zwei Zust&auml;nden. Darum werden nur die Ziffern 0 und 1 verwendet.
-          </p>
-          <div class="formula">110101_2 = 1 x 2^5 + 1 x 2^4 + 0 x 2^3 + 1 x 2^2 + 0 x 2^1 + 1 x 2^0</div>
-          <p class="muted">Von rechts nach links werden die Stellen mit 1, 2, 4, 8, 16, 32, ... gewichtet.</p>
+        <article class="card theory-card">
+          <h3>Bin&auml;r &rarr; Dezimal</h3>
+          <ol class="theory-steps">
+            <li>Schreibe unter jede Stelle die Zweierpotenz.</li>
+            <li>Multipliziere jede Potenz mit der Ziffer 0 oder 1.</li>
+            <li>Addiere nur die Stellen, an denen eine 1 steht.</li>
+          </ol>
+          <div class="formula">110101₂
+= 32 + 16 + 0 + 4 + 0 + 1
+= 53₁₀</div>
         </article>
 
-        <article class="card">
-          <h3>3. Hexadezimalsystem</h3>
-          <p>
-            Basis 16: Ziffern 0-9 und A-F. Eine Hex-Ziffer entspricht immer genau 4 Bits.
-          </p>
-          <div class="formula">A = 10, B = 11, C = 12, D = 13, E = 14, F = 15</div>
-          <p class="muted">Das macht lange Bin&auml;rzahlen viel kompakter.</p>
+        <article class="card theory-card">
+          <h3>Dezimal &rarr; Bin&auml;r</h3>
+          <ol class="theory-steps">
+            <li>Teile die Zahl wiederholt durch 2.</li>
+            <li>Notiere bei jeder Division den Rest 0 oder 1.</li>
+            <li>Lies die Reste am Schluss von unten nach oben.</li>
+          </ol>
+          <div class="formula">13 : 2 = 6 Rest 1
+ 6 : 2 = 3 Rest 0
+ 3 : 2 = 1 Rest 1
+ 1 : 2 = 0 Rest 1
+→ 13₁₀ = 1101₂</div>
         </article>
 
-        <article class="card">
-          <h3>4. Schriftliche Verfahren</h3>
-          <ul>
-            <li>Addition: von rechts nach links rechnen und Uebertr&auml;ge mitnehmen.</li>
-            <li>Multiplikation: Teilprodukte nach Stellenwert verschieben.</li>
-            <li>Bin&auml;re Multiplikation: 1 x Zahl = Zahl, 0 x Zahl = 0.</li>
-          </ul>
+        <article class="card theory-card">
+          <h3>Bin&auml;r &harr; Hexadezimal</h3>
+          <p>Eine Hex-Ziffer ersetzt genau vier Bits. Gruppiere eine Bin&auml;rzahl deshalb von rechts in Viererbl&ouml;cke; links darfst du Nullen erg&auml;nzen.</p>
+          <div class="formula">1010 1101₂ = AD₁₆
+A=10, B=11, C=12, D=13, E=14, F=15</div>
+          <p><b>Merkregel:</b> Bin&auml;r ↔ Hex geht direkt in Vierergruppen. Der Umweg &uuml;ber Dezimal ist nicht n&ouml;tig.</p>
+        </article>
+
+        <article class="card theory-card">
+          <h3>Bin&auml;re Addition</h3>
+          <p>Rechne von rechts nach links. Schreibe jeden &Uuml;bertrag &uuml;ber die n&auml;chste Spalte links.</p>
+          <div class="rule-grid">
+            <span>0 + 0 = 0</span><span>0 + 1 = 1</span>
+            <span>1 + 1 = 10</span><span>1 + 1 + 1 = 11</span>
+          </div>
+          <p>Bei 10 schreibst du 0 und &uuml;bertr&auml;gst 1. Bei 11 schreibst du 1 und &uuml;bertr&auml;gst 1.</p>
+        </article>
+
+        <article class="card theory-card">
+          <h3>Bin&auml;re Multiplikation</h3>
+          <ol class="theory-steps">
+            <li>Multipliziere mit jeder Ziffer des unteren Faktors.</li>
+            <li>Bei 1 &uuml;bernimmst du die obere Zahl, bei 0 entsteht eine Nullzeile.</li>
+            <li>Verschiebe jede neue Teilzeile eine Stelle nach links.</li>
+            <li>Addiere die Teilprodukte. Nutze oben bei Bedarf mehrere &Uuml;bertr&auml;ge wie <b>1+1</b>.</li>
+          </ol>
+          <div class="formula">1011₂ × 101₂ = 110111₂</div>
         </article>
       </div>
     </section>
@@ -896,8 +1303,8 @@
           <h2>Schriftliche Addition und Multiplikation</h2>
           <p>
             Diese beiden Arbeitsbl&auml;tter sind so gebaut, dass du den kompletten Rechenweg direkt eintippen kannst.
-            Trage oben jeden &Uuml;bertrag ein. Bei der Multiplikation f&uuml;llst du jede Teilzeile mit 0 und 1
-            und verschiebst die 1er-Zeile pro Stelle um ein K&auml;stchen nach links.
+            Klicke zuerst in ein &Uuml;bertragsfeld und dann auf <b>+1</b>. So kannst du auch mehrere Einsen
+            wie <b>1+1</b> oberhalb einer Spalte eintragen. Das funktioniert bei Addition und Multiplikation.
           </p>
         </div>
       </div>
@@ -905,7 +1312,7 @@
       <div class="grid-2">
         <article class="card">
           <h3>Bin&auml;re Addition</h3>
-          <p>Beispiel: 1110110<sub>2</sub> + 1001<sub>2</sub>. Trage die Uebertr&auml;ge und die Summe ein.</p>
+          <p>Trage oben die &Uuml;bertr&auml;ge und unten die Summe ein. Leere &Uuml;bertragsfelder z&auml;hlen als 0.</p>
           <div class="paper-area">
             <div class="paper-title">
               <h3>Arbeitsfeld Addition</h3>
@@ -924,8 +1331,8 @@
 
         <article class="card">
           <h3>Bin&auml;re Multiplikation</h3>
-          <p>Jede Ziffer des unteren Faktors wird einzeln gerechnet: <b>1 x Zahl = Zahl</b>, <b>0 x Zahl = 0</b>.
-            Schreibe alle Teilprodukte mit Nullen aus und verschiebe sie pro Stelle nach links.</p>
+          <p>F&uuml;lle zuerst alle Teilprodukte aus. Addiere sie anschliessend und trage die dabei entstehenden
+            &Uuml;bertr&auml;ge in die oberste Zeile ein.</p>
           <div class="paper-area">
             <div class="paper-title">
               <h3>Arbeitsfeld Multiplikation</h3>
@@ -979,12 +1386,15 @@ Reste von unten nach oben lesen: 10111"></textarea>
     <section class="section" id="aufgaben">
       <div class="section-header">
         <div>
-          <h2>Uebungsaufgaben mit Pr&uuml;fung</h2>
-          <p>Die Aufgaben sind an die Arbeitsbl&auml;tter angelehnt. Du kannst den Rechenweg daneben notieren und die Antwort kontrollieren.</p>
+          <h2>&Uuml;bungsaufgaben mit Pr&uuml;fung</h2>
+          <p>Jeder Aufgabentyp erzeugt beliebig viele neue Zahlen. Dein Rechenweg bleibt frei, die Ergebnisse werden sofort kontrolliert.</p>
+        </div>
+        <div class="exercise-toolbar">
+          <button class="tiny-btn" type="button" id="newAllExercisesBtn">Alle Aufgaben neu</button>
         </div>
       </div>
 
-      <div class="exercises">
+      <div class="exercises" id="exerciseList">
         <article class="exercise" data-answers="53">
           <div class="exercise-head">
             <div>
@@ -1231,13 +1641,34 @@ Beispiel: A9E = 1010 1001 1110</div>
     const state = {
       solved: new Set(),
       addition: null,
-      multiplication: null
+      multiplication: null,
+      activeCarryInput: null,
+      exerciseSignatures: new Map()
     };
+
+    const TOTAL_TASKS = 9;
+    const THEME_KEY = "binary-learning-theme";
 
     const digitMap = "0123456789ABCDEF";
 
     const $ = (sel, root = document) => root.querySelector(sel);
     const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+    function setTheme(theme) {
+      const selected = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = selected;
+      localStorage.setItem(THEME_KEY, selected);
+      const button = $("#themeToggle");
+      if (button) {
+        button.setAttribute("aria-label", selected === "dark" ? "Hellen Modus aktivieren" : "Dunklen Modus aktivieren");
+      }
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      setTheme(saved || preferred);
+    }
 
     function normalize(value) {
       return String(value || "")
@@ -1392,7 +1823,32 @@ Beispiel: A9E = 1010 1001 1110</div>
 
     function updateProgress() {
       const count = state.solved.size;
-      $("#solvedCount").textContent = `${count} / 9`;
+      $("#solvedCount").textContent = `${count} / ${TOTAL_TASKS}`;
+    }
+
+    function parseCarryExpression(value) {
+      const clean = String(value || "").replace(/\s+/g, "");
+      if (!clean) return 0;
+      if (/^1(?:\+1)*$/.test(clean)) return clean.split("+").length;
+      if (/^[01]+$/.test(clean)) return parseInt(clean, 2);
+      return Number.NaN;
+    }
+
+    function carryValues(selector) {
+      return $$(selector).map(field => parseCarryExpression(field.value));
+    }
+
+    function addOneToActiveCarry(kind) {
+      const input = state.activeCarryInput;
+      if (!input || !input.classList.contains(`${kind}-carry`)) {
+        const first = $(`.${kind}-carry`);
+        if (!first) return;
+        state.activeCarryInput = first;
+      }
+      const target = state.activeCarryInput;
+      target.value = target.value ? `${target.value}+1` : "1";
+      target.dispatchEvent(new Event("input", { bubbles: true }));
+      target.focus();
     }
 
     function buildAdditionTask(a, b, base) {
@@ -1409,16 +1865,16 @@ Beispiel: A9E = 1010 1001 1110</div>
       const expA = padLeft(padA, resultLen, "0");
       const expB = padLeft(padB, resultLen, "0");
       const expR = padLeft(result, resultLen, "0");
-      const carry = Array(resultLen).fill("0");
+      const carry = Array(resultLen).fill(0);
       let c = 0n;
-      for (let i = 0; i < resultLen; i++) {
-        const ia = expA[resultLen - 1 - i] || "0";
-        const ib = expB[resultLen - 1 - i] || "0";
+      for (let column = resultLen - 1; column >= 0; column--) {
+        const ia = expA[column] || "0";
+        const ib = expB[column] || "0";
         const da = BigInt(digitMap.indexOf(ia));
         const db = BigInt(digitMap.indexOf(ib));
         const s = da + db + c;
         c = s / BigInt(base);
-        carry[resultLen - 1 - i] = c.toString();
+        if (column > 0) carry[column - 1] = Number(c);
       }
       return { a: expA, b: expB, result: expR, carry, base };
     }
@@ -1427,9 +1883,12 @@ Beispiel: A9E = 1010 1001 1110</div>
       const board = $("#additionBoard");
       const cols = task.result.length;
       const rows = `
-        <div class="row">
-          <span class="sign"></span>
-          ${Array.from({ length: cols }, (_, i) => `<input class="digit-input addition-carry" maxlength="1" data-index="${i}" inputmode="numeric" aria-label="Uebertrag ${i + 1}">`).join("")}
+        <div class="carry-tools">
+          <span>&Uuml;bertr&auml;ge: Feld w&auml;hlen, dann bei Bedarf +1</span>
+          <button class="carry-add-btn" type="button" data-add-carry="addition">+1 eintragen</button>
+        </div>
+        <div class="row carry-row">
+          ${Array.from({ length: cols }, (_, i) => `<input class="digit-input carry-input addition-carry" maxlength="9" data-index="${i}" inputmode="text" placeholder="&middot;" aria-label="&Uuml;bertrag ${i + 1}">`).join("")}
         </div>
         <div class="row">
           <span class="sign"></span>
@@ -1465,7 +1924,16 @@ Beispiel: A9E = 1010 1001 1110</div>
         partials.push({ digit, shift: idx, value: toBaseString(partial, base) });
       });
       const len = Math.max(result.length, A.length + B.length);
-      return { a: A, b: B, result: padLeft(result, len, "0"), partials };
+      const paddedPartials = partials.map(partial => padLeft(partial.value, len, "0"));
+      const carry = Array(len).fill(0);
+      let incoming = 0;
+      for (let column = len - 1; column >= 0; column--) {
+        const ones = paddedPartials.reduce((sum, partial) => sum + Number(partial[column]), 0);
+        const outgoing = Math.floor((ones + incoming) / base);
+        if (column > 0) carry[column - 1] = outgoing;
+        incoming = outgoing;
+      }
+      return { a: A, b: B, result: padLeft(result, len, "0"), partials, carry };
     }
 
     function renderMultiplicationBoard(task) {
@@ -1493,6 +1961,13 @@ Beispiel: A9E = 1010 1001 1110</div>
         <div class="math-rule"></div>
         ${partialRows}
         <div class="math-rule"></div>
+        <div class="carry-tools">
+          <span>&Uuml;bertr&auml;ge beim Addieren der Teilprodukte</span>
+          <button class="carry-add-btn" type="button" data-add-carry="multiplication">+1 eintragen</button>
+        </div>
+        <div class="row carry-row">
+          ${Array.from({ length: maxLen }, (_, i) => `<input class="digit-input carry-input multiplication-carry mult-carry" maxlength="9" data-index="${i}" inputmode="text" placeholder="&middot;" aria-label="&Uuml;bertrag der Teilprodukte ${i + 1}">`).join("")}
+        </div>
         <div class="row">
           <span class="sign"></span>
           ${Array.from({ length: maxLen }, (_, i) => `<input class="digit-input mult-result" maxlength="1" data-index="${i}" inputmode="text" aria-label="Endergebnis ${i + 1}">`).join("")}
@@ -1513,31 +1988,180 @@ Beispiel: A9E = 1010 1001 1110</div>
       }
     }
 
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function freshValues(key, create) {
+      let values = create();
+      let signature = JSON.stringify(values);
+      for (let attempt = 0; attempt < 12 && state.exerciseSignatures.get(key) === signature; attempt++) {
+        values = create();
+        signature = JSON.stringify(values);
+      }
+      state.exerciseSignatures.set(key, signature);
+      return values;
+    }
+
+    function conversionExpansion(binary) {
+      return binary.split("").map((digit, index) => {
+        const power = binary.length - 1 - index;
+        return digit === "1" ? String(2 ** power) : "0";
+      }).join(" + ");
+    }
+
+    const exerciseGenerators = [
+      () => {
+        const decimal = randomInt(18, 255);
+        const binary = decimal.toString(2);
+        return {
+          topic: "Bin&auml;r &rarr; Dezimal",
+          prompt: `Wandle <b>${binary}<sub>2</sub></b> in eine Dezimalzahl um.`,
+          hint: "Notiere die Zweierpotenzen und addiere nur die Stellen mit einer 1.",
+          fields: [{ label: "Dezimalzahl", answer: String(decimal) }],
+          solution: `${binary}<sub>2</sub> = ${conversionExpansion(binary)} = <b>${decimal}<sub>10</sub></b>.`
+        };
+      },
+      () => {
+        const decimal = randomInt(18, 255);
+        const binary = decimal.toString(2);
+        return {
+          topic: "Dezimal &rarr; Bin&auml;r",
+          prompt: `Wandle <b>${decimal}<sub>10</sub></b> in eine Bin&auml;rzahl um.`,
+          hint: "Teile wiederholt durch 2 und lies die Reste von unten nach oben.",
+          fields: [{ label: "Bin&auml;rzahl", answer: binary }],
+          solution: `${decimal}<sub>10</sub> = <b>${binary}<sub>2</sub></b>.`
+        };
+      },
+      () => {
+        const decimal = randomInt(32, 4095);
+        const binary = decimal.toString(2);
+        const hex = decimal.toString(16).toUpperCase();
+        return {
+          topic: "Dezimal &rarr; Bin&auml;r &rarr; Hex",
+          prompt: `Wandle <b>${decimal}<sub>10</sub></b> zuerst in Bin&auml;r und dann in Hexadezimal um.`,
+          hint: "Bilde nach der Bin&auml;rumrechnung Vierergruppen von rechts.",
+          fields: [{ label: "Bin&auml;r", answer: binary }, { label: "Hexadezimal", answer: hex }],
+          solution: `${decimal}<sub>10</sub> = <b>${binary}<sub>2</sub></b> = <b>${hex}<sub>16</sub></b>.`
+        };
+      },
+      () => {
+        const decimal = randomInt(256, 4095);
+        const hex = decimal.toString(16).toUpperCase();
+        const binary = decimal.toString(2);
+        return {
+          topic: "Hex &rarr; Bin&auml;r &rarr; Dezimal",
+          prompt: `Wandle <b>${hex}<sub>16</sub></b> zuerst in Bin&auml;r und dann in Dezimal um.`,
+          hint: "Ersetze jede Hex-Ziffer durch vier Bits und addiere danach die Stellenwerte.",
+          fields: [{ label: "Bin&auml;r", answer: binary }, { label: "Dezimal", answer: String(decimal) }],
+          solution: `${hex}<sub>16</sub> = <b>${groupBinary(binary)}<sub>2</sub></b> = <b>${decimal}<sub>10</sub></b>.`
+        };
+      },
+      () => {
+        const left = randomInt(17, 127);
+        const right = randomInt(5, 63);
+        const result = left + right;
+        return {
+          topic: "Bin&auml;re Addition",
+          prompt: `Addiere <b>${left.toString(2)}<sub>2</sub> + ${right.toString(2)}<sub>2</sub></b>.`,
+          hint: "Rechne von rechts nach links und schreibe jeden &Uuml;bertrag eine Spalte weiter links.",
+          fields: [{ label: "Summe", answer: result.toString(2) }],
+          solution: `${left.toString(2)}<sub>2</sub> + ${right.toString(2)}<sub>2</sub> = <b>${result.toString(2)}<sub>2</sub></b> (${left} + ${right} = ${result}).`
+        };
+      },
+      () => {
+        const left = randomInt(5, 31);
+        const right = randomInt(3, 15);
+        const result = left * right;
+        return {
+          topic: "Bin&auml;re Multiplikation",
+          prompt: `Multipliziere <b>${left.toString(2)}<sub>2</sub> &times; ${right.toString(2)}<sub>2</sub></b>.`,
+          hint: "Erstelle je Multiplikator-Bit ein verschobenes Teilprodukt und addiere alle Zeilen.",
+          fields: [{ label: "Produkt", answer: result.toString(2) }],
+          solution: `${left.toString(2)}<sub>2</sub> &times; ${right.toString(2)}<sub>2</sub> = <b>${result.toString(2)}<sub>2</sub></b> (${left} &times; ${right} = ${result}).`
+        };
+      },
+      () => {
+        const decimalDigits = randomInt(2, 6);
+        const binaryDigits = randomInt(3, 10);
+        const decimalMax = "9".repeat(decimalDigits);
+        const binaryMax = "1".repeat(binaryDigits);
+        return {
+          topic: "Maximalwerte",
+          prompt: `Bestimme die gr&ouml;sste Zahl mit <b>${decimalDigits} Dezimalstellen</b> und mit <b>${binaryDigits} Bin&auml;rstellen</b>.`,
+          hint: "Maximalzahl: Basis hoch Stellenzahl minus 1.",
+          fields: [{ label: "Dezimal", answer: decimalMax }, { label: "Bin&auml;r", answer: binaryMax }],
+          solution: `${decimalDigits} Dezimalstellen: <b>${decimalMax}</b>. ${binaryDigits} Bin&auml;rstellen: <b>${binaryMax}<sub>2</sub></b> = ${2 ** binaryDigits - 1}<sub>10</sub>.`
+        };
+      }
+    ];
+
+    function renderExercise(index) {
+      const list = $("#exerciseList");
+      const key = `exercise-${index}`;
+      const task = freshValues(key, exerciseGenerators[index]);
+      state.solved.delete(key);
+      const card = document.createElement("article");
+      card.className = "exercise";
+      card.dataset.exerciseId = key;
+      card.dataset.answers = task.fields.map(field => field.answer).join("|");
+      card.innerHTML = `
+        <div class="exercise-head">
+          <div><strong>Aufgabe ${index + 1}</strong><span>${task.prompt}</span></div>
+          <span class="chip">${task.topic}</span>
+        </div>
+        <label>Rechenweg
+          <textarea placeholder="${task.hint}"></textarea>
+        </label>
+        <div class="answers ${task.fields.length > 1 ? "three" : ""}">
+          ${task.fields.map(field => `<label>${field.label}<input type="text" data-answer-input placeholder="Antwort" autocomplete="off" spellcheck="false"></label>`).join("")}
+        </div>
+        <div class="exercise-actions">
+          <button class="tiny-btn" type="button" data-check-exercise>Pr&uuml;fen</button>
+          <button class="tiny-btn secondary" type="button" data-show-answer>L&ouml;sung zeigen</button>
+          <button class="tiny-btn secondary new-exercise-btn" type="button" data-new-exercise="${index}">Neue Aufgabe</button>
+        </div>
+        <div class="feedback" aria-live="polite"></div>
+        <div class="solution hidden">${task.solution}</div>
+      `;
+      const oldCard = $(`[data-exercise-id="${key}"]`, list);
+      if (oldCard) oldCard.replaceWith(card);
+      else list.appendChild(card);
+      updateProgress();
+    }
+
+    function renderAllExercises() {
+      const list = $("#exerciseList");
+      list.innerHTML = "";
+      exerciseGenerators.forEach((_, index) => renderExercise(index));
+    }
+
     function renderAdditionTask() {
       const base = 2;
-      const pairs = [
-        ["1110110", "1001"], ["110101", "1011"], ["1011011", "11011"],
-        ["1111001", "10111"], ["101011", "11101"], ["1100111", "1111"]
-      ];
-      const [a, b] = pairs[Math.floor(Math.random() * pairs.length)];
+      const [a, b] = freshValues("addition-board", () => [
+        randomInt(25, 127).toString(2),
+        randomInt(7, 63).toString(2)
+      ]);
       state.solved.delete("addition");
       const task = buildAdditionTask(a, b, base);
       renderAdditionBoard(task);
-      $("#additionSolution").textContent = `${stripLeadingZeros(task.a)} + ${stripLeadingZeros(task.b)} = ${stripLeadingZeros(task.result)} (Basis 2).`;
+      const carryLine = task.carry.map(value => value ? Array(value).fill("1").join("+") : "&middot;").join(" &nbsp; ");
+      $("#additionSolution").innerHTML = `&Uuml;bertr&auml;ge: ${carryLine}<br><b>${stripLeadingZeros(task.a)} + ${stripLeadingZeros(task.b)} = ${stripLeadingZeros(task.result)}</b> (Basis 2).`;
       updateProgress();
     }
 
     function renderMultiplicationTask() {
       const base = 2;
-      const pairs = [
-        ["1011", "101"], ["1101", "11"], ["1110", "1011"],
-        ["10011", "101"], ["11001", "111"], ["10101", "1101"]
-      ];
-      const [a, b] = pairs[Math.floor(Math.random() * pairs.length)];
+      const [a, b] = freshValues("multiplication-board", () => [
+        randomInt(5, 31).toString(2),
+        randomInt(3, 15).toString(2)
+      ]);
       state.solved.delete("multiplication");
       const task = buildMultiplicationTask(a, b, base);
       renderMultiplicationBoard(task);
-      $("#multiplicationSolution").textContent = `${stripLeadingZeros(task.a)} x ${stripLeadingZeros(task.b)} = ${stripLeadingZeros(task.result)} (Basis 2).`;
+      const partialLines = task.partials.map((partial, index) => `${index + 1}. Teilprodukt: ${padLeft(partial.value, task.result.length, "0")}`).join("<br>");
+      const carryLine = task.carry.map(value => value ? Array(value).fill("1").join("+") : "&middot;").join(" &nbsp; ");
+      $("#multiplicationSolution").innerHTML = `${partialLines}<br>&Uuml;bertr&auml;ge: ${carryLine}<br><b>${stripLeadingZeros(task.a)} &times; ${stripLeadingZeros(task.b)} = ${stripLeadingZeros(task.result)}</b> (Basis 2).`;
       updateProgress();
     }
 
@@ -1549,20 +2173,22 @@ Beispiel: A9E = 1010 1001 1110</div>
       if (!state.addition) return;
       const feedback = $("#additionFeedback");
       const solution = $("#additionSolution");
-      const carryValue = stripLeadingZeros(collectCellValue(".addition-carry"));
+      const carryValue = carryValues(".addition-carry");
       const resultValue = stripLeadingZeros(collectCellValue(".addition-result"));
-      const expectedCarry = stripLeadingZeros(state.addition.carry.join(""));
+      const expectedCarry = state.addition.carry;
       const expectedResult = stripLeadingZeros(state.addition.result);
-      const ok = carryValue === expectedCarry && resultValue === expectedResult;
+      const carriesOk = carryValue.length === expectedCarry.length &&
+        carryValue.every((value, index) => value === expectedCarry[index]);
+      const ok = carriesOk && resultValue === expectedResult;
 
       if (ok) {
         feedback.className = "feedback ok";
-        feedback.textContent = "Richtig. Deine Uebertr&auml;ge und die Summe stimmen.";
+        feedback.textContent = "Richtig. Deine Überträge und die Summe stimmen.";
         solution.classList.remove("hidden");
         state.solved.add("addition");
       } else {
         feedback.className = "feedback bad";
-        feedback.textContent = `Noch nicht ganz. Ueberpr&uuml;fe die Uebertr&auml;ge und das Endergebnis.`;
+        feedback.textContent = "Noch nicht ganz. Überprüfe die Überträge und das Endergebnis.";
         state.solved.delete("addition");
       }
       updateProgress();
@@ -1574,7 +2200,10 @@ Beispiel: A9E = 1010 1001 1110</div>
       const solution = $("#multiplicationSolution");
       const resultValue = stripLeadingZeros(collectCellValue(".mult-result"));
       const expectedResult = stripLeadingZeros(state.multiplication.result);
-      const partialValues = $$('[data-row]').reduce((rows, field) => {
+      const carryValue = carryValues(".mult-carry");
+      const carriesOk = carryValue.length === state.multiplication.carry.length &&
+        carryValue.every((value, index) => value === state.multiplication.carry[index]);
+      const partialValues = $$('.mult-partial[data-row]').reduce((rows, field) => {
         const row = Number(field.dataset.row);
         rows[row] = (rows[row] || "") + normalize(field.value || "0");
         return rows;
@@ -1584,16 +2213,16 @@ Beispiel: A9E = 1010 1001 1110</div>
       );
       const partialsOk = partialValues.length === expectedPartials.length &&
         partialValues.every((value, index) => stripLeadingZeros(value) === expectedPartials[index]);
-      const ok = partialsOk && resultValue === expectedResult;
+      const ok = partialsOk && carriesOk && resultValue === expectedResult;
 
       if (ok) {
         feedback.className = "feedback ok";
-        feedback.textContent = "Richtig. Teilprodukte, Nullen, Verschiebung und Ergebnis stimmen.";
+        feedback.textContent = "Richtig. Teilprodukte, Überträge und Ergebnis stimmen.";
         solution.classList.remove("hidden");
         state.solved.add("multiplication");
       } else {
         feedback.className = "feedback bad";
-        feedback.textContent = "Noch nicht ganz. Pr&uuml;fe jedes Teilprodukt, f&uuml;lle die Reststellen mit 0 und verschiebe jede 1er-Zeile.";
+        feedback.textContent = "Noch nicht ganz. Prüfe Teilprodukte, Verschiebungen, Überträge und das Ergebnis.";
         state.solved.delete("multiplication");
       }
       updateProgress();
@@ -1610,14 +2239,14 @@ Beispiel: A9E = 1010 1001 1110</div>
       if (ok) {
         card.dataset.done = "true";
         feedback.className = "feedback ok";
-        feedback.textContent = "Richtig gel&ouml;st.";
+        feedback.textContent = "Richtig gelöst.";
         solution.classList.remove("hidden");
-        state.solved.add(card);
+        state.solved.add(card.dataset.exerciseId);
       } else {
         card.dataset.done = "false";
         feedback.className = "feedback bad";
         feedback.textContent = "Noch nicht ganz richtig. Schau noch einmal auf den Rechenweg.";
-        state.solved.delete(card);
+        state.solved.delete(card.dataset.exerciseId);
       }
       updateProgress();
     }
@@ -1627,25 +2256,15 @@ Beispiel: A9E = 1010 1001 1110</div>
       const feedback = $(".feedback", card);
       solution.classList.remove("hidden");
       feedback.className = "feedback";
-      feedback.textContent = "L&ouml;sung eingeblendet.";
+      feedback.textContent = "Lösung eingeblendet.";
     }
 
     function resetAllSolutions() {
-      $$(".solution").forEach(el => {
-        el.classList.add("hidden");
-        el.textContent = el.dataset.original || el.textContent;
-      });
-      $$(".feedback").forEach(el => {
-        el.className = "feedback";
-        el.textContent = "";
-      });
-      $$("[data-answer-input]").forEach(el => el.value = "");
-      $$(".digit-input").forEach(el => el.value = "");
       state.solved.clear();
-      ["addition", "multiplication"].forEach(key => state.solved.delete(key));
-      updateProgress();
       renderAdditionTask();
       renderMultiplicationTask();
+      renderAllExercises();
+      updateProgress();
     }
 
     function setupSolutionsCache() {
@@ -1667,6 +2286,14 @@ Beispiel: A9E = 1010 1001 1110</div>
       document.addEventListener("input", (event) => {
         const target = event.target;
         if (!target.classList.contains("digit-input")) return;
+        if (target.classList.contains("carry-input")) {
+          target.value = target.value
+            .replace(/[^1+]/g, "")
+            .replace(/^\++/, "")
+            .replace(/\+{2,}/g, "+")
+            .slice(0, 9);
+          return;
+        }
         target.value = target.value.toUpperCase().replace(/[^01]/g, "");
         if (target.value.length > 1) target.value = target.value.slice(0, 1);
         if (target.value && target.nextElementSibling && target.nextElementSibling.classList.contains("digit-input")) {
@@ -1687,9 +2314,13 @@ Beispiel: A9E = 1010 1001 1110</div>
     }
 
     function init() {
-      setupSolutionsCache();
+      initTheme();
       wireDigitsUppercase();
       wireAutoAdvance();
+
+      $("#themeToggle").addEventListener("click", () => {
+        setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+      });
 
       $("#convertBtn").addEventListener("click", convertNow);
       $("#fromBase").addEventListener("change", convertNow);
@@ -1713,10 +2344,13 @@ Beispiel: A9E = 1010 1001 1110</div>
       });
 
       $("#resetAllBtn").addEventListener("click", resetAllSolutions);
+      $("#newAllExercisesBtn").addEventListener("click", renderAllExercises);
 
       document.addEventListener("click", (event) => {
         const checkBtn = event.target.closest("[data-check-exercise]");
         const showBtn = event.target.closest("[data-show-answer]");
+        const newBtn = event.target.closest("[data-new-exercise]");
+        const addCarryBtn = event.target.closest("[data-add-carry]");
         if (checkBtn) {
           const card = checkBtn.closest(".exercise");
           checkExercise(card);
@@ -1724,6 +2358,18 @@ Beispiel: A9E = 1010 1001 1110</div>
         if (showBtn) {
           const card = showBtn.closest(".exercise");
           showExerciseAnswer(card);
+        }
+        if (newBtn) {
+          renderExercise(Number(newBtn.dataset.newExercise));
+        }
+        if (addCarryBtn) {
+          addOneToActiveCarry(addCarryBtn.dataset.addCarry);
+        }
+      });
+
+      document.addEventListener("focusin", (event) => {
+        if (event.target.classList.contains("carry-input")) {
+          state.activeCarryInput = event.target;
         }
       });
 
@@ -1735,6 +2381,7 @@ Beispiel: A9E = 1010 1001 1110</div>
 
       renderAdditionTask();
       renderMultiplicationTask();
+      renderAllExercises();
       convertNow();
       updateProgress();
     }
