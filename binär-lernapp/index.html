@@ -1,0 +1,1745 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bin&auml;r, Dezimal, Hexadezimal - Lernwebsite</title>
+  <style>
+    :root {
+      --bg: #070c14;
+      --bg-2: #101b2b;
+      --paper: #111c2b;
+      --paper-2: #172538;
+      --ink: #e7eef8;
+      --muted: #94a7bd;
+      --accent: #38bdf8;
+      --accent-2: #8bdcff;
+      --ok: #51d88a;
+      --warn: #f6bd60;
+      --bad: #ff7b7b;
+      --line: rgba(190, 220, 255, 0.14);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+      --radius-sm: 14px;
+      --mono: "Courier New", Courier, monospace;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--serif);
+      background:
+        radial-gradient(circle at top left, rgba(13, 126, 168, 0.15), transparent 30%),
+        radial-gradient(circle at top right, rgba(18, 64, 107, 0.11), transparent 32%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+      min-height: 100vh;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1250px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 20px 0 64px;
+    }
+
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(13, 126, 168, 0.96), rgba(18, 64, 107, 0.96)),
+        linear-gradient(135deg, #0d7ea8, #12406b);
+      color: #fff;
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -100px -120px auto;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.09);
+      filter: blur(4px);
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      font: 700 0.76rem/1.1 var(--sans);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin: 0 0 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 14px 0 0;
+      max-width: 62ch;
+      font: 400 1.03rem/1.55 var(--sans);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 0.85rem 1.1rem;
+      font: 700 0.95rem/1 var(--sans);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(1px); }
+
+    .btn.primary {
+      background: #fff;
+      color: var(--accent-2);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: none;
+    }
+
+    .hero-stats {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 18px;
+      padding: 14px 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      font: 500 0.92rem/1.35 var(--sans);
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .section {
+      margin-top: 22px;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      padding: 22px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 1.55rem;
+      line-height: 1.15;
+    }
+
+    .section-header p {
+      margin: 6px 0 0;
+      font: 400 0.98rem/1.5 var(--sans);
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    .progress {
+      min-width: 280px;
+      display: grid;
+      gap: 8px;
+      justify-items: end;
+      font: 700 0.9rem/1 var(--sans);
+      color: var(--accent-2);
+    }
+
+    .progress-bar {
+      width: min(320px, 100%);
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(23, 33, 43, 0.08);
+      overflow: hidden;
+      border: 1px solid rgba(23, 33, 43, 0.08);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #6fbde0);
+      transition: width 0.25s ease;
+    }
+
+    .goals {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .goal {
+      background: linear-gradient(180deg, #fff, var(--paper-2));
+      border: 1px solid rgba(23, 33, 43, 0.08);
+      border-radius: 18px;
+      padding: 14px 15px 14px 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      min-height: 84px;
+    }
+
+    .goal input {
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-top: 0.2rem;
+      accent-color: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .goal strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .goal span {
+      color: var(--muted);
+      font: 400 0.92rem/1.45 var(--sans);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #fff, #fcfaf3);
+      border-radius: 22px;
+      border: 1px solid rgba(23, 33, 43, 0.08);
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(17, 24, 39, 0.05);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+      line-height: 1.2;
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+      font: 400 0.96rem/1.55 var(--sans);
+    }
+
+    .card ul {
+      margin: 0.7rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    .formula {
+      font-family: var(--mono);
+      font-size: 0.96rem;
+      background: rgba(13, 126, 168, 0.07);
+      border: 1px solid rgba(13, 126, 168, 0.12);
+      border-radius: 14px;
+      padding: 12px;
+      color: #d8e8f7;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .lab {
+      display: grid;
+      gap: 14px;
+    }
+
+    .tool {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 16px;
+    }
+
+    .tool-panel {
+      border-radius: 20px;
+      background: linear-gradient(180deg, #14263a, #0e1b2b);
+      border: 1px solid rgba(139, 220, 255, 0.14);
+      padding: 16px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: end;
+    }
+
+    .field-row.compact {
+      grid-template-columns: 1fr;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      font: 700 0.88rem/1.1 var(--sans);
+      color: var(--accent-2);
+    }
+
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(139, 220, 255, 0.2);
+      background: #0b1523;
+      color: var(--ink);
+      padding: 0.8rem 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-family: var(--sans);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      font-family: var(--mono);
+      line-height: 1.5;
+      background:
+        linear-gradient(#0b1523, #0b1523) padding-box,
+        repeating-linear-gradient(
+          to bottom,
+          rgba(139, 220, 255, 0.1) 0,
+          rgba(139, 220, 255, 0.1) 1px,
+          transparent 1px,
+          transparent 1.62em
+        ) border-box;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(13, 126, 168, 0.65);
+      box-shadow: 0 0 0 4px rgba(13, 126, 168, 0.12);
+    }
+
+    .tiny-btn {
+      border: 1px solid rgba(139, 220, 255, 0.2);
+      background: #17283d;
+      color: var(--accent-2);
+      box-shadow: none;
+      padding: 0.8rem 0.95rem;
+      border-radius: 14px;
+      font: 700 0.92rem/1 var(--sans);
+    }
+
+    .tiny-btn.secondary {
+      background: rgba(13, 126, 168, 0.07);
+    }
+
+    .result-box {
+      margin-top: 12px;
+      border-radius: 16px;
+      background: rgba(13, 126, 168, 0.06);
+      border: 1px solid rgba(13, 126, 168, 0.12);
+      padding: 12px 14px;
+      font: 600 0.95rem/1.5 var(--sans);
+      color: #14354d;
+    }
+
+    .result-box.ok {
+      background: rgba(22, 121, 76, 0.08);
+      border-color: rgba(22, 121, 76, 0.16);
+      color: var(--ok);
+    }
+
+    .result-box.bad {
+      background: rgba(180, 35, 24, 0.08);
+      border-color: rgba(180, 35, 24, 0.15);
+      color: var(--bad);
+    }
+
+    .worksheet {
+      display: grid;
+      gap: 14px;
+    }
+
+    .paper-area {
+      background:
+        linear-gradient(180deg, rgba(20, 34, 52, 0.98), rgba(13, 24, 38, 0.98)),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(139, 220, 255, 0.09) 0,
+          rgba(139, 220, 255, 0.09) 1px,
+          transparent 1px,
+          transparent 1.8rem
+        );
+      border: 1px solid rgba(139, 220, 255, 0.16);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .paper-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .paper-title h3 {
+      margin: 0;
+      font-size: 1.08rem;
+    }
+
+    .paper-title span {
+      font: 600 0.9rem/1 var(--sans);
+      color: var(--muted);
+    }
+
+    .math-board {
+      display: grid;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .math-board .row {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 2.15rem;
+      gap: 4px;
+      align-items: center;
+      width: max-content;
+      min-width: 100%;
+      font-family: var(--mono);
+    }
+
+    .math-grid {
+      display: grid;
+      gap: 6px;
+      justify-content: start;
+      align-items: center;
+      font-family: var(--mono);
+    }
+
+    .math-grid .row {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 2.15rem;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .math-grid .row.small {
+      grid-auto-columns: 2.15rem;
+    }
+
+    .math-grid .row .sign {
+      width: 2.15rem;
+      text-align: center;
+      font-weight: 700;
+      color: var(--accent-2);
+    }
+
+    .digit-slot,
+    .digit-input {
+      width: 2.15rem;
+      height: 2.15rem;
+      text-align: center;
+      border-radius: 10px;
+      border: 1px solid rgba(139, 220, 255, 0.2);
+      background: #0b1523;
+      font: 700 1rem/1 var(--mono);
+      color: var(--ink);
+    }
+
+    .digit-slot {
+      display: grid;
+      place-items: center;
+      background: rgba(13, 126, 168, 0.05);
+      color: #dceafa;
+    }
+
+    .digit-input:focus {
+      outline: 2px solid rgba(13, 126, 168, 0.2);
+      border-color: var(--accent);
+    }
+
+    .math-rule {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(23, 33, 43, 0.45), transparent);
+      margin: 4px 0;
+    }
+
+    .subgrid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .subgrid .mini-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .checklist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.45rem 0.7rem;
+      background: rgba(13, 126, 168, 0.08);
+      color: var(--accent-2);
+      border: 1px solid rgba(13, 126, 168, 0.12);
+      border-radius: 999px;
+      font: 700 0.85rem/1 var(--sans);
+    }
+
+    .exercises {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .exercise {
+      display: grid;
+      gap: 12px;
+      background: linear-gradient(180deg, #fff, #f9f7f0);
+      border: 1px solid rgba(23, 33, 43, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .exercise[data-done="true"] {
+      border-color: rgba(22, 121, 76, 0.22);
+      box-shadow: 0 0 0 1px rgba(22, 121, 76, 0.06) inset;
+    }
+
+    .exercise-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .exercise-head strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 1.02rem;
+    }
+
+    .exercise-head span {
+      font: 500 0.9rem/1.4 var(--sans);
+      color: var(--muted);
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .answers.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .exercise-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .feedback {
+      font: 700 0.92rem/1.45 var(--sans);
+      margin-top: -2px;
+    }
+
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+    .muted {
+      color: var(--muted);
+    }
+
+    details {
+      border-radius: 16px;
+      border: 1px solid rgba(23, 33, 43, 0.08);
+      background: rgba(13, 126, 168, 0.05);
+      padding: 12px 14px;
+    }
+
+    summary {
+      cursor: pointer;
+      font: 700 0.95rem/1.3 var(--sans);
+      color: var(--accent-2);
+    }
+
+    details > div {
+      margin-top: 10px;
+      font: 400 0.95rem/1.55 var(--sans);
+      color: var(--muted);
+    }
+
+    .steps {
+      display: grid;
+      gap: 8px;
+      margin: 10px 0 0;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      font: 400 0.93rem/1.45 var(--sans);
+      color: var(--muted);
+    }
+
+    .step b {
+      color: var(--accent-2);
+    }
+
+    .footnote {
+      margin-top: 18px;
+      font: 400 0.9rem/1.5 var(--sans);
+      color: var(--muted);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .solution {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(22, 121, 76, 0.06);
+      border: 1px solid rgba(22, 121, 76, 0.14);
+      font: 600 0.94rem/1.5 var(--sans);
+      color: var(--ok);
+    }
+
+    .partial-note {
+      margin-top: -4px;
+      font: 700 0.82rem/1.2 var(--sans);
+      color: var(--muted);
+    }
+
+    @media (max-width: 980px) {
+      .tool, .grid-2, .grid-3, .exercises, .goals, .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-top {
+        flex-direction: column;
+      }
+
+      .hero-actions {
+        justify-content: flex-start;
+      }
+
+      .progress {
+        justify-items: start;
+        min-width: 0;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .answers, .answers.three {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .hero, .section, .card, .exercise, .paper-area {
+        box-shadow: none !important;
+      }
+
+      .hero-actions, .tiny-btn, .btn, .exercise-actions {
+        display: none !important;
+      }
+
+      .page {
+        width: 100%;
+        padding: 0;
+      }
+
+      .section {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">Bin&auml;r - Dezimal - Hexadezimal</p>
+          <h1>Lernwebsite mit Theorie, Rechenwegen und Aufgaben</h1>
+          <p>
+            Diese Seite ist wie ein digitales Arbeitsblatt aufgebaut: kurze Erkl&auml;rungen,
+            schriftliche Verfahren zum Ausf&uuml;llen, Umwandlungen zwischen den Zahlensystemen
+            und Aufgaben, die du direkt l&ouml;sen und pr&uuml;fen kannst.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn primary" type="button" onclick="window.print()">Seite drucken</button>
+          <button class="btn secondary" type="button" id="resetAllBtn">Alle L&ouml;sungen l&ouml;schen</button>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <strong id="solvedCount">0 / 9</strong>
+          <span>Aufgaben sind bereits richtig gel&ouml;st.</span>
+        </div>
+        <div class="stat">
+          <strong>Schriftlich</strong>
+          <span>Addition, Multiplikation, Reste und Verschiebung wie auf Papier.</span>
+        </div>
+        <div class="stat">
+          <strong>Ohne Hilfsmittel</strong>
+          <span>Passt f&uuml;r die Pr&uuml;fungsvorbereitung und das freie &Uuml;ben.</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="section" id="lernziele">
+      <div class="section-header">
+        <div>
+          <h2>Lernziele</h2>
+          <p>Alles, was du f&uuml;r das Thema k&ouml;nnen musst, ist hier in kleine Schritte zerlegt.</p>
+        </div>
+      </div>
+      <div class="goals">
+        <label class="goal"><input type="checkbox" checked disabled><div><strong>Computer rechnen im Bin&auml;rsystem</strong><span>0 und 1 sind die Grundbausteine aller digitalen Informationen.</span></div></label>
+        <label class="goal"><input type="checkbox" checked disabled><div><strong>Bin&auml;rzahl in Dezimalzahl umwandeln</strong><span>Du liest Stellenwerte von rechts nach links und addierst die Gewichte.</span></div></label>
+        <label class="goal"><input type="checkbox" checked disabled><div><strong>Dezimalzahl in Bin&auml;rzahl umwandeln</strong><span>Mit Resten oder durch Zerlegen in Zweierpotenzen.</span></div></label>
+        <label class="goal"><input type="checkbox" checked disabled><div><strong>Hexadezimalsystem kennen</strong><span>Basis 16 mit den Zeichen 0-9 und A-F.</span></div></label>
+        <label class="goal"><input type="checkbox" checked disabled><div><strong>Zwischen allen drei Systemen wechseln</strong><span>Bin&auml;r, Dezimal und Hexadezimal sicher miteinander verbinden.</span></div></label>
+        <label class="goal"><input type="checkbox" checked disabled><div><strong>Bin&auml;r addieren</strong><span>Mit Uebertrag, genau wie bei der schriftlichen Addition.</span></div></label>
+        <label class="goal"><input type="checkbox" checked disabled><div><strong>Bin&auml;r multiplizieren</strong><span>Teilprodukte und Verschiebung verstehen.</span></div></label>
+        <label class="goal"><input type="checkbox" checked disabled><div><strong>Gr&ouml;sste Zahl erkennen</strong><span>Mit n Stellen ist die gr&ouml;sste Zahl im Dezimalsystem 999... und im Bin&auml;rsystem 111... .</span></div></label>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Kurztheorie zum Merken</h2>
+          <p>Wie auf den Bl&auml;ttern: erst die Idee, dann das Beispiel, dann die Rechenregel.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <h3>1. Dezimalsystem</h3>
+          <p>
+            Das Dezimalsystem benutzt die Ziffern 0 bis 9. Jede Stelle steht f&uuml;r eine Potenz von 10.
+          </p>
+          <div class="formula">538 = 5 x 10^2 + 3 x 10^1 + 8 x 10^0</div>
+          <p class="muted">Merkregel: Jede Stelle hat einen Wert, der von ihrer Position abh&auml;ngt.</p>
+        </article>
+
+        <article class="card">
+          <h3>2. Bin&auml;rsystem</h3>
+          <p>
+            Computer arbeiten mit zwei Zust&auml;nden. Darum werden nur die Ziffern 0 und 1 verwendet.
+          </p>
+          <div class="formula">110101_2 = 1 x 2^5 + 1 x 2^4 + 0 x 2^3 + 1 x 2^2 + 0 x 2^1 + 1 x 2^0</div>
+          <p class="muted">Von rechts nach links werden die Stellen mit 1, 2, 4, 8, 16, 32, ... gewichtet.</p>
+        </article>
+
+        <article class="card">
+          <h3>3. Hexadezimalsystem</h3>
+          <p>
+            Basis 16: Ziffern 0-9 und A-F. Eine Hex-Ziffer entspricht immer genau 4 Bits.
+          </p>
+          <div class="formula">A = 10, B = 11, C = 12, D = 13, E = 14, F = 15</div>
+          <p class="muted">Das macht lange Bin&auml;rzahlen viel kompakter.</p>
+        </article>
+
+        <article class="card">
+          <h3>4. Schriftliche Verfahren</h3>
+          <ul>
+            <li>Addition: von rechts nach links rechnen und Uebertr&auml;ge mitnehmen.</li>
+            <li>Multiplikation: Teilprodukte nach Stellenwert verschieben.</li>
+            <li>Bin&auml;re Multiplikation: 1 x Zahl = Zahl, 0 x Zahl = 0.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section lab" id="umrechner">
+      <div class="section-header">
+        <div>
+          <h2>Interaktiver Umrechner</h2>
+          <p>Hier kannst du Zahlen selbst eingeben und die Umwandlung mit Rechenschritten ansehen.</p>
+        </div>
+        <div class="progress">
+          <span>Umrechner live</span>
+          <div class="progress-bar"><div class="progress-fill" id="converterFill"></div></div>
+        </div>
+      </div>
+      <div class="tool">
+        <div class="tool-panel">
+          <div class="field-row">
+            <label>
+              Von
+              <select id="fromBase">
+                <option value="10">Dezimal</option>
+                <option value="2">Bin&auml;r</option>
+                <option value="16">Hexadezimal</option>
+              </select>
+            </label>
+            <label>
+              Nach
+              <select id="toBase">
+                <option value="2">Bin&auml;r</option>
+                <option value="10">Dezimal</option>
+                <option value="16">Hexadezimal</option>
+              </select>
+            </label>
+            <button class="tiny-btn" type="button" id="convertBtn">Umwandeln</button>
+          </div>
+          <label>
+            Zahl
+            <input id="convertInput" type="text" value="173" autocomplete="off" spellcheck="false">
+          </label>
+          <div class="result-box" id="convertResult">Gib eine Zahl ein und dr&uuml;cke auf Umwandeln.</div>
+        </div>
+
+        <div class="tool-panel">
+          <h3 style="margin-top:0;">So wird gerechnet</h3>
+          <div class="steps" id="convertSteps">
+            <div class="step"><b>1.</b><div>W&auml;hle links die Ausgangsbasis und rechts das Zielsystem.</div></div>
+            <div class="step"><b>2.</b><div>Die App zeigt dir die passenden Zwischenschritte.</div></div>
+            <div class="step"><b>3.</b><div>Du kannst die Schritte als Vorlage f&uuml;r deine Heftarbeit verwenden.</div></div>
+          </div>
+          <div class="footnote">
+            Tipp: Bei Bin&auml;r zu Hex werden die Bits in Vierergruppen zusammengefasst.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="schriftlich">
+      <div class="section-header">
+        <div>
+          <h2>Schriftliche Addition und Multiplikation</h2>
+          <p>
+            Diese beiden Arbeitsbl&auml;tter sind so gebaut, dass du den kompletten Rechenweg direkt eintippen kannst.
+            Trage oben jeden &Uuml;bertrag ein. Bei der Multiplikation f&uuml;llst du jede Teilzeile mit 0 und 1
+            und verschiebst die 1er-Zeile pro Stelle um ein K&auml;stchen nach links.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>Bin&auml;re Addition</h3>
+          <p>Beispiel: 1110110<sub>2</sub> + 1001<sub>2</sub>. Trage die Uebertr&auml;ge und die Summe ein.</p>
+          <div class="paper-area">
+            <div class="paper-title">
+              <h3>Arbeitsfeld Addition</h3>
+              <span>Von rechts nach links rechnen</span>
+            </div>
+            <div class="math-board" id="additionBoard"></div>
+            <div class="exercise-actions" style="margin-top:12px;">
+              <button class="tiny-btn" type="button" id="checkAdditionBtn">Pr&uuml;fen</button>
+              <button class="tiny-btn secondary" type="button" id="showAdditionSolutionBtn">L&ouml;sung zeigen</button>
+              <button class="tiny-btn" type="button" id="newAdditionBtn">Neue Aufgabe</button>
+            </div>
+            <div class="feedback" id="additionFeedback"></div>
+            <div class="solution hidden" id="additionSolution"></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Bin&auml;re Multiplikation</h3>
+          <p>Jede Ziffer des unteren Faktors wird einzeln gerechnet: <b>1 x Zahl = Zahl</b>, <b>0 x Zahl = 0</b>.
+            Schreibe alle Teilprodukte mit Nullen aus und verschiebe sie pro Stelle nach links.</p>
+          <div class="paper-area">
+            <div class="paper-title">
+              <h3>Arbeitsfeld Multiplikation</h3>
+              <span>Teilprodukte, Nullen &amp; Verschiebung</span>
+            </div>
+            <div class="math-board" id="multiplicationBoard"></div>
+            <div class="exercise-actions" style="margin-top:12px;">
+              <button class="tiny-btn" type="button" id="checkMultiplicationBtn">Pr&uuml;fen</button>
+              <button class="tiny-btn secondary" type="button" id="showMultiplicationSolutionBtn">L&ouml;sung zeigen</button>
+              <button class="tiny-btn" type="button" id="newMultiplicationBtn">Neue Aufgabe</button>
+            </div>
+            <div class="feedback" id="multiplicationFeedback"></div>
+            <div class="solution hidden" id="multiplicationSolution"></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Freies Schreibfeld wie auf Papier</h2>
+          <p>Hier kannst du Rechenwege, Tabellen und Restfolgen genau so notieren, wie es in der Theorie verlangt wird.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Dezimal &rarr; Bin&auml;r</h3>
+          <p>Schreibe hier die Division durch 2 mit Resten auf.</p>
+          <textarea placeholder="Beispiel:
+23 : 2 = 11 Rest 1
+11 : 2 = 5 Rest 1
+5 : 2 = 2 Rest 1
+2 : 2 = 1 Rest 0
+1 : 2 = 0 Rest 1
+
+Reste von unten nach oben lesen: 10111"></textarea>
+        </div>
+        <div class="card">
+          <h3>Bin&auml;r &rarr; Dezimal</h3>
+          <p>Nutze die Stellenwerte 2^0, 2^1, 2^2, ... und addiere die gewichteten Werte.</p>
+          <textarea placeholder="Beispiel:
+110101_2
+= 1 x 2^5 + 1 x 2^4 + 0 x 2^3 + 1 x 2^2 + 0 x 2^1 + 1 x 2^0
+= 32 + 16 + 4 + 1
+= 53"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="aufgaben">
+      <div class="section-header">
+        <div>
+          <h2>Uebungsaufgaben mit Pr&uuml;fung</h2>
+          <p>Die Aufgaben sind an die Arbeitsbl&auml;tter angelehnt. Du kannst den Rechenweg daneben notieren und die Antwort kontrollieren.</p>
+        </div>
+      </div>
+
+      <div class="exercises">
+        <article class="exercise" data-answers="53">
+          <div class="exercise-head">
+            <div>
+              <strong>Aufgabe 1</strong>
+              <span>Wandle 110101<sub>2</sub> in eine Dezimalzahl um. Der Rechenweg soll sichtbar sein.</span>
+            </div>
+            <span class="chip">Bin&auml;r &rarr; Dezimal</span>
+          </div>
+          <textarea placeholder="Schreibe hier die Stellenwerte auf ..."></textarea>
+          <div class="answers">
+            <label>Endergebnis
+              <input type="text" data-answer-input="53" placeholder="Antwort">
+            </label>
+            <label>Kontrolle
+              <input type="text" placeholder="Optional: 32 + 16 + 4 + 1">
+            </label>
+          </div>
+          <div class="exercise-actions">
+            <button class="tiny-btn" type="button" data-check-exercise>Pr&uuml;fen</button>
+            <button class="tiny-btn secondary" type="button" data-show-answer>Antwort zeigen</button>
+          </div>
+          <div class="feedback"></div>
+          <div class="solution hidden">110101<sub>2</sub> = 32 + 16 + 4 + 1 = 53.</div>
+        </article>
+
+        <article class="exercise" data-answers="100101">
+          <div class="exercise-head">
+            <div>
+              <strong>Aufgabe 2</strong>
+              <span>Wandle 37<sub>10</sub> in eine Bin&auml;rzahl um. Nutze den Restweg oder das Zerlegen.</span>
+            </div>
+            <span class="chip">Dezimal &rarr; Bin&auml;r</span>
+          </div>
+          <textarea placeholder="Beispiel:
+37 : 2 = 18 Rest 1
+18 : 2 = 9 Rest 0
+9 : 2 = 4 Rest 1
+4 : 2 = 2 Rest 0
+2 : 2 = 1 Rest 0
+1 : 2 = 0 Rest 1"></textarea>
+          <div class="answers">
+            <label>Endergebnis
+              <input type="text" data-answer-input="100101" placeholder="Antwort">
+            </label>
+            <label>Schreibweise
+              <input type="text" placeholder="z.B. 100101_2">
+            </label>
+          </div>
+          <div class="exercise-actions">
+            <button class="tiny-btn" type="button" data-check-exercise>Pr&uuml;fen</button>
+            <button class="tiny-btn secondary" type="button" data-show-answer>Antwort zeigen</button>
+          </div>
+          <div class="feedback"></div>
+          <div class="solution hidden">37<sub>10</sub> = 100101<sub>2</sub>.</div>
+        </article>
+
+        <article class="exercise" data-answers="10101101|AD">
+          <div class="exercise-head">
+            <div>
+              <strong>Aufgabe 3</strong>
+              <span>Wandle 173<sub>10</sub> zuerst in Bin&auml;r und dann in Hexadezimal um.</span>
+            </div>
+            <span class="chip">Dezimal &rarr; Bin&auml;r &rarr; Hex</span>
+          </div>
+          <textarea placeholder="Tipp:
+173 : 2 = 86 Rest 1
+86 : 2 = 43 Rest 0
+...
+Dann Vierergruppen bilden: 1010 1101"></textarea>
+          <div class="answers three">
+            <label>Bin&auml;r
+              <input type="text" data-answer-input="10101101" placeholder="Antwort">
+            </label>
+            <label>Hex
+              <input type="text" data-answer-input="AD" placeholder="Antwort">
+            </label>
+            <label>Kontrolle
+              <input type="text" placeholder="173">
+            </label>
+          </div>
+          <div class="exercise-actions">
+            <button class="tiny-btn" type="button" data-check-exercise>Pr&uuml;fen</button>
+            <button class="tiny-btn secondary" type="button" data-show-answer>Antwort zeigen</button>
+          </div>
+          <div class="feedback"></div>
+          <div class="solution hidden">173<sub>10</sub> = 10101101<sub>2</sub> = AD<sub>16</sub>.</div>
+        </article>
+
+        <article class="exercise" data-answers="101010011110|2718">
+          <div class="exercise-head">
+            <div>
+              <strong>Aufgabe 4</strong>
+              <span>Wandle A9E<sub>16</sub> zuerst in eine Bin&auml;rzahl und dann in eine Dezimalzahl um.</span>
+            </div>
+            <span class="chip">Hex &rarr; Bin&auml;r &rarr; Dezimal</span>
+          </div>
+          <textarea placeholder="Tipp:
+A = 1010
+9 = 1001
+E = 1110
+Dann zusammenf&uuml;gen."></textarea>
+          <div class="answers three">
+            <label>Bin&auml;r
+              <input type="text" data-answer-input="101010011110" placeholder="Antwort">
+            </label>
+            <label>Dezimal
+              <input type="text" data-answer-input="2718" placeholder="Antwort">
+            </label>
+            <label>Kontrolle
+              <input type="text" placeholder="10 x 16^2 + 9 x 16 + 14">
+            </label>
+          </div>
+          <div class="exercise-actions">
+            <button class="tiny-btn" type="button" data-check-exercise>Pr&uuml;fen</button>
+            <button class="tiny-btn secondary" type="button" data-show-answer>Antwort zeigen</button>
+          </div>
+          <div class="feedback"></div>
+          <div class="solution hidden">A9E<sub>16</sub> = 1010 1001 1110<sub>2</sub> = 2718<sub>10</sub>.</div>
+        </article>
+
+        <article class="exercise" data-answers="1111111">
+          <div class="exercise-head">
+            <div>
+              <strong>Aufgabe 5</strong>
+              <span>Addiere 1110110<sub>2</sub> + 1001<sub>2</sub>. Schreibe die Uebertr&auml;ge mit auf.</span>
+            </div>
+            <span class="chip">Bin&auml;re Addition</span>
+          </div>
+          <textarea placeholder="Schriftlich:
+1110110
++   1001
+-------
+        "></textarea>
+          <div class="answers">
+            <label>Endergebnis
+              <input type="text" data-answer-input="1111111" placeholder="Antwort">
+            </label>
+            <label>Dezimal-Kontrolle
+              <input type="text" placeholder="127">
+            </label>
+          </div>
+          <div class="exercise-actions">
+            <button class="tiny-btn" type="button" data-check-exercise>Pr&uuml;fen</button>
+            <button class="tiny-btn secondary" type="button" data-show-answer>Antwort zeigen</button>
+          </div>
+          <div class="feedback"></div>
+          <div class="solution hidden">1110110<sub>2</sub> + 1001<sub>2</sub> = 1111111<sub>2</sub>.</div>
+        </article>
+
+        <article class="exercise" data-answers="110111">
+          <div class="exercise-head">
+            <div>
+              <strong>Aufgabe 6</strong>
+              <span>Multipliziere 1011<sub>2</sub> x 101<sub>2</sub> und achte auf die Verschiebung der Teilprodukte.</span>
+            </div>
+            <span class="chip">Bin&auml;re Multiplikation</span>
+          </div>
+          <textarea placeholder="Schriftlich:
+      1011
+    x  101
+    ------
+      1011
+     0000
+    1011
+    ------"></textarea>
+          <div class="answers">
+            <label>Endergebnis
+              <input type="text" data-answer-input="110111" placeholder="Antwort">
+            </label>
+            <label>Dezimal-Kontrolle
+              <input type="text" placeholder="55">
+            </label>
+          </div>
+          <div class="exercise-actions">
+            <button class="tiny-btn" type="button" data-check-exercise>Pr&uuml;fen</button>
+            <button class="tiny-btn secondary" type="button" data-show-answer>Antwort zeigen</button>
+          </div>
+          <div class="feedback"></div>
+          <div class="solution hidden">1011<sub>2</sub> x 101<sub>2</sub> = 110111<sub>2</sub>.</div>
+        </article>
+
+        <article class="exercise" data-answers="999|111111">
+          <div class="exercise-head">
+            <div>
+              <strong>Aufgabe 7</strong>
+              <span>Wie lautet die gr&ouml;sste Zahl mit 3 Dezimalstellen und mit 6 Bin&auml;rstellen?</span>
+            </div>
+            <span class="chip">Maximalwerte</span>
+          </div>
+          <textarea placeholder="Merke:
+3 Dezimalstellen = 999
+6 Bin&auml;rstellen = 111111_2 = 63"></textarea>
+          <div class="answers three">
+            <label>Dezimal
+              <input type="text" data-answer-input="999" placeholder="Antwort">
+            </label>
+            <label>Bin&auml;r
+              <input type="text" data-answer-input="111111" placeholder="Antwort">
+            </label>
+            <label>Kontrolle in Zahl
+              <input type="text" placeholder="63">
+            </label>
+          </div>
+          <div class="exercise-actions">
+            <button class="tiny-btn" type="button" data-check-exercise>Pr&uuml;fen</button>
+            <button class="tiny-btn secondary" type="button" data-show-answer>Antwort zeigen</button>
+          </div>
+          <div class="feedback"></div>
+          <div class="solution hidden">Mit 3 Dezimalstellen ist die gr&ouml;sste Zahl 999. Mit 6 Bin&auml;rstellen ist sie 111111<sub>2</sub> = 63.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Schnellformeln</h2>
+          <p>Die wichtigsten Regeln komprimiert, damit du beim Lernen schnell nachschlagen kannst.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <h3>Maximalzahl</h3>
+          <div class="formula">n Dezimalstellen: 10^n - 1
+n Bin&auml;rstellen: 2^n - 1</div>
+        </article>
+        <article class="card">
+          <h3>Bin&auml;r + Bin&auml;r</h3>
+          <div class="formula">0 + 0 = 0
+0 + 1 = 1
+1 + 1 = 10
+1 + 1 + 1 = 11</div>
+        </article>
+        <article class="card">
+          <h3>Hex-Umrechnung</h3>
+          <div class="formula">1 Hex-Ziffer = 4 Bits
+Beispiel: A9E = 1010 1001 1110</div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      solved: new Set(),
+      addition: null,
+      multiplication: null
+    };
+
+    const digitMap = "0123456789ABCDEF";
+
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+    function normalize(value) {
+      return String(value || "")
+        .toUpperCase()
+        .replace(/\s+/g, "")
+        .replace(/_([0-9A-Z]+)$/g, "");
+    }
+
+    function stripLeadingZeros(value) {
+      const clean = normalize(value);
+      const stripped = clean.replace(/^0+(?=\d)/, "");
+      return stripped || "0";
+    }
+
+    function parseBigIntBase(value, base) {
+      const clean = normalize(value);
+      if (!clean) return null;
+      let result = 0n;
+      const bigBase = BigInt(base);
+      for (const ch of clean) {
+        const digit = digitMap.indexOf(ch);
+        if (digit < 0 || digit >= base) return null;
+        result = result * bigBase + BigInt(digit);
+      }
+      return result;
+    }
+
+    function toBaseString(num, base) {
+      let n = BigInt(num);
+      if (n === 0n) return "0";
+      const bigBase = BigInt(base);
+      let out = "";
+      while (n > 0n) {
+        const digit = Number(n % bigBase);
+        out = digitMap[digit] + out;
+        n = n / bigBase;
+      }
+      return out;
+    }
+
+    function padLeft(str, len, fill = "0") {
+      const s = String(str);
+      if (s.length >= len) return s;
+      return fill.repeat(len - s.length) + s;
+    }
+
+    function groupBinary(str) {
+      const clean = normalize(str);
+      const pad = (4 - (clean.length % 4)) % 4;
+      const padded = "0".repeat(pad) + clean;
+      const groups = [];
+      for (let i = 0; i < padded.length; i += 4) {
+        groups.push(padded.slice(i, i + 4));
+      }
+      return groups.join(" ");
+    }
+
+    function explanationForConversion(value, fromBase, toBase) {
+      const source = normalize(value);
+      const srcBig = parseBigIntBase(source, fromBase);
+      if (srcBig === null) {
+        return {
+          result: "",
+          title: "Ung&uuml;ltige Eingabe",
+          steps: ["Die Zahl enth&auml;lt Zeichen, die nicht zur gew&auml;hlten Basis passen."]
+        };
+      }
+
+      let result = "";
+      const steps = [];
+      if (fromBase === toBase) {
+        result = source;
+        steps.push("Quell- und Zielbasis sind gleich. Die Zahl bleibt unver&auml;ndert.");
+      } else if (fromBase === 10 && toBase === 2) {
+        let n = srcBig;
+        const remainders = [];
+        while (n > 0n) {
+          const quotient = n / 2n;
+          const remainder = n % 2n;
+          steps.push(`${n.toString()} : 2 = ${quotient.toString()} Rest ${remainder.toString()}`);
+          remainders.push(remainder.toString());
+          n = quotient;
+        }
+        result = remainders.reverse().join("") || "0";
+        steps.push(`Reste von unten nach oben lesen: ${result}`);
+      } else if (fromBase === 2 && toBase === 10) {
+        const clean = source;
+        const parts = [];
+        let sum = 0n;
+        for (let i = 0; i < clean.length; i++) {
+          const digit = BigInt(clean[clean.length - 1 - i]);
+          const weight = 2n ** BigInt(i);
+          if (digit === 1n) {
+            parts.push(`${weight.toString()}`);
+            sum += weight;
+          } else {
+            parts.push(`0`);
+          }
+        }
+        result = sum.toString();
+        steps.push(`${clean}_2 = ${clean.split("").map((d, i) => `${d} x 2^${clean.length - 1 - i}`).join(" + ")}`);
+        steps.push(`Gewichtete Werte: ${clean.split("").map((d, i) => `${d === "1" ? 2 ** (clean.length - 1 - i) : 0}`).join(" + ")}`);
+        steps.push(`Summe: ${result}`);
+      } else if (fromBase === 10 && toBase === 16) {
+        let n = srcBig;
+        const remainders = [];
+        while (n > 0n) {
+          const quotient = n / 16n;
+          const remainder = n % 16n;
+          steps.push(`${n.toString()} : 16 = ${quotient.toString()} Rest ${remainder.toString()}${remainder >= 10n ? ` (${digitMap[Number(remainder)]})` : ""}`);
+          remainders.push(digitMap[Number(remainder)]);
+          n = quotient;
+        }
+        result = remainders.reverse().join("") || "0";
+        steps.push(`Reste von unten nach oben lesen: ${result}`);
+      } else if (fromBase === 16 && toBase === 10) {
+        const clean = source;
+        let sum = 0n;
+        clean.split("").forEach((ch, i) => {
+          const digit = BigInt(digitMap.indexOf(ch));
+          const weight = 16n ** BigInt(clean.length - 1 - i);
+          const term = digit * weight;
+          sum += term;
+          steps.push(`${ch} x 16^${clean.length - 1 - i} = ${term.toString()}`);
+        });
+        result = sum.toString();
+        steps.push(`Summe: ${result}`);
+      } else if (fromBase === 2 && toBase === 16) {
+        result = toBaseString(srcBig, 16);
+        const grouped = groupBinary(source);
+        steps.push(`Bits in Vierergruppen aufteilen: ${grouped}`);
+        const padded = grouped.split(" ").map(chunk => digitMap[parseInt(chunk, 2)]).join("");
+        steps.push(`Jede Gruppe in eine Hex-Ziffer umwandeln: ${padded}`);
+      } else if (fromBase === 16 && toBase === 2) {
+        result = toBaseString(srcBig, 2);
+        const pieces = source.split("").map(ch => `${ch} = ${padLeft(parseInt(ch, 16).toString(2), 4)}`).join(", ");
+        steps.push(`Jede Hex-Ziffer entspricht 4 Bits: ${pieces}`);
+        steps.push(`Zusammenf&uuml;gen ergibt: ${groupBinary(result)}`);
+      } else {
+        result = toBaseString(srcBig, toBase);
+        steps.push(`Zuerst in Dezimal umrechnen und dann weiter in die Zielbasis.`);
+      }
+
+      return { result, title: "Umrechnung", steps };
+    }
+
+    function renderSteps(container, steps) {
+      container.innerHTML = steps.map((step, index) => `
+        <div class="step"><b>${index + 1}.</b><div>${step}</div></div>
+      `).join("");
+    }
+
+    function updateProgress() {
+      const count = state.solved.size;
+      $("#solvedCount").textContent = `${count} / 9`;
+    }
+
+    function buildAdditionTask(a, b, base) {
+      const A = normalize(a);
+      const B = normalize(b);
+      const len = Math.max(A.length, B.length);
+      const padA = padLeft(A, len, "0");
+      const padB = padLeft(B, len, "0");
+      const bigA = parseBigIntBase(A, base);
+      const bigB = parseBigIntBase(B, base);
+      const sum = bigA + bigB;
+      const result = toBaseString(sum, base);
+      const resultLen = Math.max(len, result.length);
+      const expA = padLeft(padA, resultLen, "0");
+      const expB = padLeft(padB, resultLen, "0");
+      const expR = padLeft(result, resultLen, "0");
+      const carry = Array(resultLen).fill("0");
+      let c = 0n;
+      for (let i = 0; i < resultLen; i++) {
+        const ia = expA[resultLen - 1 - i] || "0";
+        const ib = expB[resultLen - 1 - i] || "0";
+        const da = BigInt(digitMap.indexOf(ia));
+        const db = BigInt(digitMap.indexOf(ib));
+        const s = da + db + c;
+        c = s / BigInt(base);
+        carry[resultLen - 1 - i] = c.toString();
+      }
+      return { a: expA, b: expB, result: expR, carry, base };
+    }
+
+    function renderAdditionBoard(task) {
+      const board = $("#additionBoard");
+      const cols = task.result.length;
+      const rows = `
+        <div class="row">
+          <span class="sign"></span>
+          ${Array.from({ length: cols }, (_, i) => `<input class="digit-input addition-carry" maxlength="1" data-index="${i}" inputmode="numeric" aria-label="Uebertrag ${i + 1}">`).join("")}
+        </div>
+        <div class="row">
+          <span class="sign"></span>
+          ${task.a.split("").map(d => `<span class="digit-slot">${d}</span>`).join("")}
+        </div>
+        <div class="row">
+          <span class="sign">+</span>
+          ${task.b.split("").map(d => `<span class="digit-slot">${d}</span>`).join("")}
+        </div>
+        <div class="math-rule"></div>
+        <div class="row">
+          <span class="sign"></span>
+          ${Array.from({ length: cols }, (_, i) => `<input class="digit-input addition-result" maxlength="1" data-index="${i}" inputmode="text" aria-label="Ergebnis ${i + 1}">`).join("")}
+        </div>
+      `;
+      board.innerHTML = rows;
+      state.addition = task;
+      clearStatus($("#additionFeedback"), $("#additionSolution"));
+    }
+
+    function buildMultiplicationTask(a, b, base) {
+      const A = normalize(a);
+      const B = normalize(b);
+      const bigA = parseBigIntBase(A, base);
+      const bigB = parseBigIntBase(B, base);
+      const product = bigA * bigB;
+      const result = toBaseString(product, base);
+      const partials = [];
+      const multiplier = B.split("").reverse();
+      multiplier.forEach((digit, idx) => {
+        const digitValue = BigInt(digitMap.indexOf(digit));
+        const partial = bigA * digitValue * (BigInt(base) ** BigInt(idx));
+        partials.push({ digit, shift: idx, value: toBaseString(partial, base) });
+      });
+      const len = Math.max(result.length, A.length + B.length);
+      return { a: A, b: B, result: padLeft(result, len, "0"), partials };
+    }
+
+    function renderMultiplicationBoard(task) {
+      const board = $("#multiplicationBoard");
+      const maxLen = task.result.length;
+      const partialRows = task.partials.map((p, idx) => `
+        <div>
+          <div class="row">
+            <span class="sign">${p.digit} x</span>
+            ${Array.from({ length: maxLen }, (_, pos) => `<input class="digit-input mult-partial" maxlength="1" data-row="${idx}" data-index="${pos}" inputmode="text" aria-label="Teilprodukt ${idx + 1}, Stelle ${pos + 1}">`).join("")}
+          </div>
+        <div class="partial-note">${idx + 1}. Teilprodukt${p.shift ? `: ${p.shift} Stelle${p.shift > 1 ? "n" : ""} nach links verschoben, Nullen erg&auml;nzen` : ": keine Verschiebung"}</div>
+        </div>
+      `).join("");
+
+      board.innerHTML = `
+        <div class="row">
+          <span class="sign"></span>
+          ${padLeft(task.a, maxLen, "0").split("").map(d => `<span class="digit-slot">${d}</span>`).join("")}
+        </div>
+        <div class="row">
+          <span class="sign">x</span>
+          ${padLeft(task.b, maxLen, "0").split("").map(d => `<span class="digit-slot">${d}</span>`).join("")}
+        </div>
+        <div class="math-rule"></div>
+        ${partialRows}
+        <div class="math-rule"></div>
+        <div class="row">
+          <span class="sign"></span>
+          ${Array.from({ length: maxLen }, (_, i) => `<input class="digit-input mult-result" maxlength="1" data-index="${i}" inputmode="text" aria-label="Endergebnis ${i + 1}">`).join("")}
+        </div>
+      `;
+      state.multiplication = task;
+      clearStatus($("#multiplicationFeedback"), $("#multiplicationSolution"));
+    }
+
+    function clearStatus(feedback, solution) {
+      if (feedback) {
+        feedback.textContent = "";
+        feedback.className = "feedback";
+      }
+      if (solution) {
+        solution.classList.add("hidden");
+        solution.textContent = "";
+      }
+    }
+
+    function renderAdditionTask() {
+      const base = 2;
+      const pairs = [
+        ["1110110", "1001"], ["110101", "1011"], ["1011011", "11011"],
+        ["1111001", "10111"], ["101011", "11101"], ["1100111", "1111"]
+      ];
+      const [a, b] = pairs[Math.floor(Math.random() * pairs.length)];
+      state.solved.delete("addition");
+      const task = buildAdditionTask(a, b, base);
+      renderAdditionBoard(task);
+      $("#additionSolution").textContent = `${stripLeadingZeros(task.a)} + ${stripLeadingZeros(task.b)} = ${stripLeadingZeros(task.result)} (Basis 2).`;
+      updateProgress();
+    }
+
+    function renderMultiplicationTask() {
+      const base = 2;
+      const pairs = [
+        ["1011", "101"], ["1101", "11"], ["1110", "1011"],
+        ["10011", "101"], ["11001", "111"], ["10101", "1101"]
+      ];
+      const [a, b] = pairs[Math.floor(Math.random() * pairs.length)];
+      state.solved.delete("multiplication");
+      const task = buildMultiplicationTask(a, b, base);
+      renderMultiplicationBoard(task);
+      $("#multiplicationSolution").textContent = `${stripLeadingZeros(task.a)} x ${stripLeadingZeros(task.b)} = ${stripLeadingZeros(task.result)} (Basis 2).`;
+      updateProgress();
+    }
+
+    function collectCellValue(selector) {
+      return $$(selector).map(el => normalize(el.value || "0")).join("");
+    }
+
+    function checkAddition() {
+      if (!state.addition) return;
+      const feedback = $("#additionFeedback");
+      const solution = $("#additionSolution");
+      const carryValue = stripLeadingZeros(collectCellValue(".addition-carry"));
+      const resultValue = stripLeadingZeros(collectCellValue(".addition-result"));
+      const expectedCarry = stripLeadingZeros(state.addition.carry.join(""));
+      const expectedResult = stripLeadingZeros(state.addition.result);
+      const ok = carryValue === expectedCarry && resultValue === expectedResult;
+
+      if (ok) {
+        feedback.className = "feedback ok";
+        feedback.textContent = "Richtig. Deine Uebertr&auml;ge und die Summe stimmen.";
+        solution.classList.remove("hidden");
+        state.solved.add("addition");
+      } else {
+        feedback.className = "feedback bad";
+        feedback.textContent = `Noch nicht ganz. Ueberpr&uuml;fe die Uebertr&auml;ge und das Endergebnis.`;
+        state.solved.delete("addition");
+      }
+      updateProgress();
+    }
+
+    function checkMultiplication() {
+      if (!state.multiplication) return;
+      const feedback = $("#multiplicationFeedback");
+      const solution = $("#multiplicationSolution");
+      const resultValue = stripLeadingZeros(collectCellValue(".mult-result"));
+      const expectedResult = stripLeadingZeros(state.multiplication.result);
+      const partialValues = $$('[data-row]').reduce((rows, field) => {
+        const row = Number(field.dataset.row);
+        rows[row] = (rows[row] || "") + normalize(field.value || "0");
+        return rows;
+      }, []);
+      const expectedPartials = state.multiplication.partials.map(partial =>
+        stripLeadingZeros(padLeft(partial.value, state.multiplication.result.length, "0"))
+      );
+      const partialsOk = partialValues.length === expectedPartials.length &&
+        partialValues.every((value, index) => stripLeadingZeros(value) === expectedPartials[index]);
+      const ok = partialsOk && resultValue === expectedResult;
+
+      if (ok) {
+        feedback.className = "feedback ok";
+        feedback.textContent = "Richtig. Teilprodukte, Nullen, Verschiebung und Ergebnis stimmen.";
+        solution.classList.remove("hidden");
+        state.solved.add("multiplication");
+      } else {
+        feedback.className = "feedback bad";
+        feedback.textContent = "Noch nicht ganz. Pr&uuml;fe jedes Teilprodukt, f&uuml;lle die Reststellen mit 0 und verschiebe jede 1er-Zeile.";
+        state.solved.delete("multiplication");
+      }
+      updateProgress();
+    }
+
+    function checkExercise(card) {
+      const fields = $$("[data-answer-input]", card);
+      const expected = (card.dataset.answers || "").split("|").map(normalize);
+      const values = fields.map(field => normalize(field.value));
+      const ok = expected.length === values.length && expected.every((ans, idx) => ans === values[idx]);
+      const feedback = $(".feedback", card);
+      const solution = $(".solution", card);
+
+      if (ok) {
+        card.dataset.done = "true";
+        feedback.className = "feedback ok";
+        feedback.textContent = "Richtig gel&ouml;st.";
+        solution.classList.remove("hidden");
+        state.solved.add(card);
+      } else {
+        card.dataset.done = "false";
+        feedback.className = "feedback bad";
+        feedback.textContent = "Noch nicht ganz richtig. Schau noch einmal auf den Rechenweg.";
+        state.solved.delete(card);
+      }
+      updateProgress();
+    }
+
+    function showExerciseAnswer(card) {
+      const solution = $(".solution", card);
+      const feedback = $(".feedback", card);
+      solution.classList.remove("hidden");
+      feedback.className = "feedback";
+      feedback.textContent = "L&ouml;sung eingeblendet.";
+    }
+
+    function resetAllSolutions() {
+      $$(".solution").forEach(el => {
+        el.classList.add("hidden");
+        el.textContent = el.dataset.original || el.textContent;
+      });
+      $$(".feedback").forEach(el => {
+        el.className = "feedback";
+        el.textContent = "";
+      });
+      $$("[data-answer-input]").forEach(el => el.value = "");
+      $$(".digit-input").forEach(el => el.value = "");
+      state.solved.clear();
+      ["addition", "multiplication"].forEach(key => state.solved.delete(key));
+      updateProgress();
+      renderAdditionTask();
+      renderMultiplicationTask();
+    }
+
+    function setupSolutionsCache() {
+      $$(".solution").forEach(el => {
+        el.dataset.original = el.textContent;
+      });
+    }
+
+    function wireDigitsUppercase() {
+      document.addEventListener("input", (event) => {
+        const target = event.target;
+        if (target.matches("input[type='text'], input[type='number']")) {
+          target.value = target.value.toUpperCase();
+        }
+      });
+    }
+
+    function wireAutoAdvance() {
+      document.addEventListener("input", (event) => {
+        const target = event.target;
+        if (!target.classList.contains("digit-input")) return;
+        target.value = target.value.toUpperCase().replace(/[^01]/g, "");
+        if (target.value.length > 1) target.value = target.value.slice(0, 1);
+        if (target.value && target.nextElementSibling && target.nextElementSibling.classList.contains("digit-input")) {
+          target.nextElementSibling.focus();
+        }
+      });
+    }
+
+    function convertNow() {
+      const from = Number($("#fromBase").value);
+      const to = Number($("#toBase").value);
+      const value = $("#convertInput").value;
+      const output = explanationForConversion(value, from, to);
+      $("#convertResult").textContent = `${value.trim() || "?"}_${from} = ${output.result || "?"}_${to}`;
+      renderSteps($("#convertSteps"), output.steps);
+      const progress = from === to ? 20 : 100;
+      $("#converterFill").style.width = `${progress}%`;
+    }
+
+    function init() {
+      setupSolutionsCache();
+      wireDigitsUppercase();
+      wireAutoAdvance();
+
+      $("#convertBtn").addEventListener("click", convertNow);
+      $("#fromBase").addEventListener("change", convertNow);
+      $("#toBase").addEventListener("change", convertNow);
+      $("#convertInput").addEventListener("input", convertNow);
+
+      $("#checkAdditionBtn").addEventListener("click", checkAddition);
+      $("#showAdditionSolutionBtn").addEventListener("click", () => {
+        $("#additionSolution").classList.remove("hidden");
+      });
+      $("#newAdditionBtn").addEventListener("click", () => {
+        renderAdditionTask();
+      });
+
+      $("#checkMultiplicationBtn").addEventListener("click", checkMultiplication);
+      $("#showMultiplicationSolutionBtn").addEventListener("click", () => {
+        $("#multiplicationSolution").classList.remove("hidden");
+      });
+      $("#newMultiplicationBtn").addEventListener("click", () => {
+        renderMultiplicationTask();
+      });
+
+      $("#resetAllBtn").addEventListener("click", resetAllSolutions);
+
+      document.addEventListener("click", (event) => {
+        const checkBtn = event.target.closest("[data-check-exercise]");
+        const showBtn = event.target.closest("[data-show-answer]");
+        if (checkBtn) {
+          const card = checkBtn.closest(".exercise");
+          checkExercise(card);
+        }
+        if (showBtn) {
+          const card = showBtn.closest(".exercise");
+          showExerciseAnswer(card);
+        }
+      });
+
+      document.addEventListener("input", (event) => {
+        if (event.target.matches("[data-answer-input]")) {
+          event.target.value = event.target.value.toUpperCase().replace(/\s+/g, "");
+        }
+      });
+
+      renderAdditionTask();
+      renderMultiplicationTask();
+      convertNow();
+      updateProgress();
+    }
+
+    init();
+  </script>
+</body>
+</html>
