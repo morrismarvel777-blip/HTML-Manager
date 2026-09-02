@@ -115,6 +115,24 @@
     perspective: 1200px;
   }
 
+  .scene.card-transition-next {
+    animation: card-enter-next .42s cubic-bezier(.2,.8,.2,1);
+  }
+
+  .scene.card-transition-prev {
+    animation: card-enter-prev .42s cubic-bezier(.2,.8,.2,1);
+  }
+
+  @keyframes card-enter-next {
+    from { opacity: 0; transform: translateX(42px) scale(.985); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+  }
+
+  @keyframes card-enter-prev {
+    from { opacity: 0; transform: translateX(-42px) scale(.985); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+  }
+
   .card {
     height: min(420px, 54vh);
     min-height: 300px;
@@ -124,6 +142,15 @@
     cursor: pointer;
     user-select: none;
     will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: .01ms !important;
+    }
   }
 
   .card.flipped { transform: rotateY(180deg); }
@@ -476,6 +503,7 @@ let marked = new Set(JSON.parse(localStorage.getItem("flashcards-marked") || "[]
 const $ = id => document.getElementById(id);
 const cardEl = $("card");
 const answerInput = $("answerInput");
+const sceneEl = document.querySelector(".scene");
 
 function activeIndexes() {
   if (!learnMarkedOnly) return cards.map((_, i) => i);
@@ -632,6 +660,7 @@ function next() {
   if (!active.length) return;
   index = (index + 1) % active.length;
   render();
+  animateCardChange("next");
 }
 
 function prev() {
@@ -639,6 +668,16 @@ function prev() {
   if (!active.length) return;
   index = (index - 1 + active.length) % active.length;
   render();
+  animateCardChange("prev");
+}
+
+function animateCardChange(direction) {
+  sceneEl.classList.remove("card-transition-next", "card-transition-prev");
+  void sceneEl.offsetWidth;
+  sceneEl.classList.add(`card-transition-${direction}`);
+  sceneEl.addEventListener("animationend", () => {
+    sceneEl.classList.remove(`card-transition-${direction}`);
+  }, { once: true });
 }
 
 function updateStats() {
