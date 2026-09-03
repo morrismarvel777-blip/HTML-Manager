@@ -507,6 +507,13 @@
     </div>
 
     <div class="side-card">
+      <div class="side-title">Lerninhalt</div>
+      <div class="tiny">Wähle aus, ob alle Begriffe oder nur Verben beim Üben und Testen erscheinen.</div>
+      <button class="btn mode-btn" id="verbsOnlyBtn">Nur Verben lernen</button>
+      <div class="marked-count" id="verbCount"></div>
+    </div>
+
+    <div class="side-card">
       <div class="side-title">Markierte Karten</div>
       <div class="tiny">Markiere Karten oben rechts mit ☆. Im Marked-Modus werden nur diese Karten gelernt und getestet.</div>
       <button class="btn mode-btn" id="learnMarkedBtn">Learn marked</button>
@@ -534,10 +541,17 @@
 <script>
 const cards = [["brother-in-law", "Schwager"], ["fiancée", "Verlobte"], ["landlord", "Vermieter"], ["mountaineer", "Bergsteiger"], ["odd", "seltsam, sonderbar"], ["occasionally", "gelegentlich"], ["aggressive", "aggressiv"], ["clique", "Clique"], ["cooperate", "kooperieren"], ["considerate", "rücksichtsvoll"], ["definite", "bestimmt"], ["dependable", "verlässlich"], ["energetic", "energisch"], ["get on with", "mit jmd. auskommen"], ["go round to", "jmd. besuchen"], ["hang out with", "Zeit mit jmd. verbringen"], ["intrigue", "neugierig machen"], ["keep up with", "Kontakt halten"], ["laid-back", "gelassen"], ["outgoing", "kontaktfreudig"], ["personality", "Persönlichkeit"], ["profile", "Profil"], ["unreliable", "unzuverlässig"], ["stand by", "zu jmd. stehen"], ["survival", "Überleben"], ["agriculture", "Landwirtschaft"], ["ambitious", "ambitioniert"], ["aptitude", "Eignung"], ["attention span", "Aufmerksamkeitsspanne"], ["conservative", "konservativ"], ["counselling", "Beratung, Therapie"], ["decisive", "entscheidend"], ["digital natives", "Digital Native"], ["diverse", "vielfältig, divers"], ["empathy", "Empathie"], ["enthusiasm", "Begeisterung"], ["equation", "Gleichung"], ["financial insecurity", "finanzielle Unsicherheit"], ["instinctive", "instinktiv"], ["instructive", "lehrreich"], ["thankful", "dankbar"], ["upbringing", "Erziehung"], ["vulnerable", "verletzlich"], ["ancestor", "Vorfahre"], ["ancestral roots", "angestammte Wurzeln"], ["approval", "Zustimmung"], ["characteristic", "Eigenschaft"], ["conscious", "bewusst"], ["curious", "neugierig"], ["descendant", "Nachkomme"], ["emigrate", "auswandern"], ["ethnic", "ethnisch"], ["free spirit", "Freigeist"], ["immigrant", "Einwanderer, Einwanderin"], ["inherit", "erben"], ["make sense", "Sinn machen"], ["melting pot", "Schmelztiegel"], ["sense of belonging", "Gefühl der Zugehörigkeit"], ["stepmother", "Stiefmutter"], ["trace", "verfolgen"], ["turn to", "sich an jmd. wenden"], ["ask after", "nach jmd. fragen"], ["faithful", "treu"], ["mutual", "gegenseitig"], ["rush", "eilen"], ["awareness", "Bewusstsein"], ["collaborate", "zusammenarbeiten"], ["comprehensive", "umfassend"], ["conceive", "konzipieren, begreifen"], ["correspondence", "Korrespondenz"], ["data", "Daten"], ["definitive", "endgültig, definitiv"], ["emotionally charged", "emotional geladen"], ["external", "extern"], ["frustrating", "frustrierend"], ["hand-drawn", "handgezeichnet"], ["impersonal", "unpersönlich"], ["indication", "Hinweis"], ["internal", "intern"], ["labour intensive", "arbeitsintensiv"], ["laborious", "mühselig, aufwendig"], ["metrics", "Metriken"], ["output", "Leistung, Ergebnis"], ["process", "Prozess"], ["revelation", "Enthüllung"], ["shameful", "schändlich"], ["surroundings", "Umgebung"], ["visualization", "Visualisierung"], ["support network", "unterstützendes Netzwerk"]];
 
+const verbTerms = new Set([
+  "cooperate", "get on with", "go round to", "hang out with", "intrigue",
+  "keep up with", "stand by", "emigrate", "inherit", "make sense", "trace",
+  "turn to", "ask after", "rush", "collaborate", "conceive"
+]);
+
 let index = 0;
 let frontLanguage = "en";
 let testMode = false;
 let learnMarkedOnly = false;
+let verbsOnly = false;
 let evaluated = false;
 let stats = { correct: 0, wrong: 0 };
 let marked = new Set(JSON.parse(localStorage.getItem("flashcards-marked") || "[]"));
@@ -549,8 +563,10 @@ const answerInput = $("answerInput");
 const sceneEl = document.querySelector(".scene");
 
 function activeIndexes() {
-  if (!learnMarkedOnly) return cards.map((_, i) => i);
-  return cards.map((_, i) => i).filter(i => marked.has(i));
+  return cards.map((_, i) => i).filter(i =>
+    (!learnMarkedOnly || marked.has(i)) &&
+    (!verbsOnly || verbTerms.has(cards[i][0]))
+  );
 }
 
 function currentCardIndex() {
@@ -584,6 +600,10 @@ function updateMarkedUI() {
   $("markedCount").textContent = `${marked.size} markiert`;
   $("learnMarkedBtn").classList.toggle("active", learnMarkedOnly);
   $("learnMarkedBtn").textContent = learnMarkedOnly ? "Alle Karten lernen" : "Learn marked";
+
+  $("verbsOnlyBtn").classList.toggle("active", verbsOnly);
+  $("verbsOnlyBtn").textContent = verbsOnly ? "Alle Begriffe lernen" : "Nur Verben lernen";
+  $("verbCount").textContent = `${verbTerms.size} Verben verfügbar`;
 }
 
 function normalize(s) {
@@ -626,9 +646,9 @@ function render(options = {}) {
   const active = activeIndexes();
 
   if (!active.length) {
-    $("frontText").textContent = "Keine markierten Karten";
-    $("backText").textContent = "Markiere zuerst Karten mit ☆";
-    $("frontLabel").textContent = "Marked Mode";
+    $("frontText").textContent = "Keine passenden Karten";
+    $("backText").textContent = learnMarkedOnly ? "Markiere passende Karten mit ☆" : "Ändere deine Auswahl";
+    $("frontLabel").textContent = "Filter";
     $("backLabel").textContent = "Hinweis";
     $("sideInfo").textContent = "Keine Karten ausgewählt";
     $("counter").textContent = "0 / 0";
@@ -655,7 +675,8 @@ function render(options = {}) {
   $("backLabel").textContent = frontLanguage === "en" ? "Deutsch" : "English";
   $("sideInfo").textContent =
     (frontLanguage === "en" ? "English → Deutsch" : "Deutsch → English") +
-    (learnMarkedOnly ? " · Marked" : "");
+    (learnMarkedOnly ? " · Marked" : "") +
+    (verbsOnly ? " · Nur Verben" : "");
   $("counter").textContent = `${index + 1} / ${active.length}`;
   $("progressBar").style.width = `${((index + 1) / active.length) * 100}%`;
 
@@ -785,6 +806,12 @@ $("markBack").addEventListener("click", toggleMark);
 
 $("learnMarkedBtn").addEventListener("click", () => {
   learnMarkedOnly = !learnMarkedOnly;
+  index = 0;
+  render();
+});
+
+$("verbsOnlyBtn").addEventListener("click", () => {
+  verbsOnly = !verbsOnly;
   index = 0;
   render();
 });
