@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Zahlensysteme – Lernstudio</title>
+  <meta name="description" content="Interaktive Lernapp für Dezimal-, Binär- und Hexadezimalzahlen sowie schriftliche Binärrechnungen.">
+  <style>
+    :root{--bg:#f5f5f7;--panel:rgba(255,255,255,.86);--text:#18181b;--muted:#68686f;--line:#d9d9df;--accent:#0877ff;--accent2:#6e5cff;--good:#138a50;--bad:#c63e48;--warn:#a56800;--shadow:0 18px 60px rgba(30,35,55,.1);--radius:24px}
+    [data-theme="dark"]{--bg:#08090c;--panel:rgba(24,25,30,.88);--text:#f6f6f8;--muted:#a5a5ae;--line:#35363e;--accent:#58a6ff;--accent2:#a596ff;--good:#43d18b;--bad:#ff6b76;--warn:#ffc45c;--shadow:0 22px 70px rgba(0,0,0,.42)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% -10%,rgba(110,92,255,.13),transparent 32%),var(--bg);color:var(--text);font:16px/1.55 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;transition:.25s}
+    button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 35%,transparent);outline-offset:2px}
+    .shell{max-width:1220px;margin:auto;padding:24px}.topbar{position:sticky;top:16px;z-index:20;display:flex;align-items:center;gap:18px;padding:14px 18px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(22px);box-shadow:var(--shadow)}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:800}.logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff}.nav{display:flex;gap:4px;flex:1;justify-content:center}.nav button,.icon-btn{border:0;background:transparent;color:var(--muted);border-radius:12px;padding:9px 13px}.nav button.active{background:var(--text);color:var(--bg)}
+    .hero{padding:76px 12px 42px;text-align:center}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:var(--accent);font-weight:750}.hero h1{font-size:clamp(2.7rem,7vw,5.8rem);line-height:.95;letter-spacing:-.065em;margin:20px auto;max-width:960px}.hero p{max-width:680px;margin:auto;color:var(--muted);font-size:1.15rem}.hero-actions{display:flex;justify-content:center;gap:10px;margin-top:28px;flex-wrap:wrap}
+    .primary,.secondary{border:0;border-radius:14px;padding:12px 18px;font-weight:750}.primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 25%,transparent)}.secondary{background:var(--panel);border:1px solid var(--line);color:var(--text)}
+    .progress-wrap{max-width:660px;margin:28px auto 0}.progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.86rem}.progress{height:8px;background:var(--line);border-radius:20px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.35s}
+    main{display:grid;gap:24px}.view{display:none}.view.active{display:block}.section-head{margin:14px 0 22px}.section-head h2{font-size:clamp(2rem,4vw,3.4rem);letter-spacing:-.045em;margin:0}.section-head p{color:var(--muted);margin:6px 0}
+    .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.card,.practice-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.card{padding:25px}.card.wide{grid-column:1/-1}.card h3{margin:0 0 12px;font-size:1.35rem}.card p{color:var(--muted)}
+    .tag{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:var(--muted);font-size:.8rem;margin-bottom:12px}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:color-mix(in srgb,var(--accent) 8%,var(--panel));border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));padding:15px;border-radius:15px;overflow:auto;color:var(--text)}.bits{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.bit{text-align:center;border:1px solid var(--line);border-radius:12px;padding:10px 4px}.bit b{display:block;color:var(--accent)}
+    .rules{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.rule{padding:12px;text-align:center;border-radius:12px;background:color-mix(in srgb,var(--accent) 8%,transparent);font-family:ui-monospace,monospace}.steps{counter-reset:s}.steps li{list-style:none;margin:12px 0;padding-left:38px;position:relative}.steps li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:var(--text);color:var(--bg);font-weight:800;font-size:.8rem}
+    .practice-panel{overflow:hidden}.practice-top{display:flex;align-items:end;gap:12px;padding:22px;border-bottom:1px solid var(--line);flex-wrap:wrap}.control{display:grid;gap:6px}.control label{font-size:.78rem;color:var(--muted);font-weight:700}.control select{min-width:190px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);padding:10px}.spacer{flex:1}.score{font-weight:800}.exercise{padding:clamp(20px,4vw,42px);min-height:460px}.exercise-header{display:flex;justify-content:space-between;gap:12px;align-items:start}.exercise h3{font-size:clamp(1.55rem,3vw,2.25rem);letter-spacing:-.03em;margin:8px 0}.prompt{font-size:1.08rem;color:var(--muted)}
+    .workspace{margin:28px 0;display:grid;gap:18px}.answer-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.answer{width:min(100%,380px);font:700 1.35rem ui-monospace,monospace;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--text);text-transform:uppercase}.suffix{font-weight:800}.workbox{border:1px solid var(--line);border-radius:18px;padding:18px;background:color-mix(in srgb,var(--bg) 72%,transparent)}.workbox h4{margin:0 0 12px}.field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:9px}.mini-field label{display:block;color:var(--muted);font-size:.75rem;margin-bottom:4px}.mini-field input{width:100%;min-width:0;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px;font-family:ui-monospace,monospace}
+    .digit-board{display:grid;gap:7px;justify-content:start;max-width:100%;overflow:auto;padding:4px}.digit-row{display:grid;grid-template-columns:34px repeat(var(--cols),48px);gap:6px;align-items:center}.digit-row span{color:var(--muted);text-align:center}.digit-row input{width:48px;height:46px;text-align:center;font:bold 1.2rem ui-monospace,monospace;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--text)}.digit-row.result{border-top:2px solid var(--text);padding-top:8px}.hint{padding:13px 15px;border-radius:13px;background:color-mix(in srgb,var(--warn) 10%,transparent);color:var(--warn)}
+    .feedback{display:none;border-radius:16px;padding:16px 18px}.feedback.show{display:block}.feedback.good{background:color-mix(in srgb,var(--good) 13%,transparent);color:var(--good)}.feedback.bad{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}.feedback strong{display:block;font-size:1.05rem}.actions{display:flex;gap:10px;flex-wrap:wrap}.solution{display:none;margin-top:12px;padding-top:12px;border-top:1px solid currentColor;white-space:pre-wrap;font-family:ui-monospace,monospace}.solution.show{display:block}
+    .goals{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.goal{padding:18px;border:1px solid var(--line);border-radius:17px;background:var(--panel)}.goal span{font-size:1.5rem}.goal b{display:block;margin:7px 0}.goal small{color:var(--muted)}footer{text-align:center;color:var(--muted);padding:42px 0 18px}
+    @media(max-width:760px){.shell{padding:12px}.topbar{top:8px}.nav{position:fixed;bottom:10px;left:10px;right:10px;background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:6px;box-shadow:var(--shadow);z-index:30}.nav button{flex:1;font-size:.78rem}.brand span{display:none}.cards,.goals{grid-template-columns:1fr}.card.wide{grid-column:auto}.hero{padding-top:56px}.bits{grid-template-columns:repeat(3,1fr)}.rules{grid-template-columns:repeat(2,1fr)}footer{padding-bottom:80px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="logo">01</div><span>Zahlensysteme</span></div>
+      <nav class="nav" aria-label="Hauptnavigation">
+        <button class="active" data-view="start">Start</button><button data-view="theorie">Theorie</button><button data-view="uebungen">Üben</button>
+      </nav>
+      <button class="icon-btn" id="theme" aria-label="Darstellung wechseln">◐</button>
+    </header>
+
+    <section class="view active" id="start">
+      <div class="hero">
+        <div class="eyebrow">● Mathematik 1.1 · Interaktiv</div>
+        <h1>Zahlen wirklich verstehen.</h1>
+        <p>Dezimal, Binär und Hex – verständlich erklärt und mit vollständigem Lösungsweg trainiert. Jede neue Aufgabe wird automatisch generiert.</p>
+        <div class="hero-actions"><button class="primary" data-go="uebungen">Jetzt üben</button><button class="secondary" data-go="theorie">Theorie ansehen</button></div>
+        <div class="progress-wrap"><div class="progress-label"><span>Dein Fortschritt</span><span id="progressText">0 richtig gelöst</span></div><div class="progress"><i id="progressBar"></i></div></div>
+      </div>
+      <div class="section-head"><h2>Diese Lernziele deckst du ab</h2><p>Alle sichtbaren Themen aus der Vorlage – vom Stellenwert bis zur schriftlichen Binärrechnung.</p></div>
+      <div class="goals">
+        <div class="goal"><span>₂</span><b>Binär ↔ Dezimal</b><small>Stellenwerte und Division durch 2 sicher anwenden.</small></div>
+        <div class="goal"><span>₁₆</span><b>Binär ↔ Hex</b><small>Vierergruppen lesen und A–F korrekt verwenden.</small></div>
+        <div class="goal"><span>＋</span><b>Binär rechnen</b><small>Addition und Multiplikation mit Überträgen lösen.</small></div>
+      </div>
+    </section>
+
+    <section class="view" id="theorie">
+      <div class="section-head"><h2>Theorie, die Sinn ergibt.</h2><p>Kurze Regeln, nachvollziehbare Schritte und vollständige Beispiele.</p></div>
+      <div class="cards">
+        <article class="card"><span class="tag">Grundlage</span><h3>Das Stellenwertsystem</h3><p>Der Wert einer Ziffer hängt von ihrer Position ab. Im Dezimalsystem ist jede Stelle zehnmal so viel wert wie die Stelle rechts davon.</p><div class="formula">538 = 5 × 10² + 3 × 10¹ + 8 × 10⁰<br>= 500 + 30 + 8</div></article>
+        <article class="card"><span class="tag">Basis 2</span><h3>Das Binärsystem</h3><p>Computer verwenden nur <b>0</b> und <b>1</b>. Von rechts nach links haben die Stellen die Werte 1, 2, 4, 8, 16, 32 …</p><div class="bits"><div class="bit"><small>2⁵</small><b>32</b></div><div class="bit"><small>2⁴</small><b>16</b></div><div class="bit"><small>2³</small><b>8</b></div><div class="bit"><small>2²</small><b>4</b></div><div class="bit"><small>2¹</small><b>2</b></div><div class="bit"><small>2⁰</small><b>1</b></div></div></article>
+        <article class="card"><span class="tag">Binär → Dezimal</span><h3>Aktive Stellen addieren</h3><p>Multipliziere jeden Stellenwert mit dem Bit darüber. Bei 0 fällt die Stelle weg, bei 1 wird sie addiert.</p><div class="formula">110101₂<br>= 1×32 + 1×16 + 0×8 + 1×4 + 0×2 + 1×1<br>= 53₁₀</div></article>
+        <article class="card"><span class="tag">Dezimal → Binär</span><h3>Wiederholt durch 2 teilen</h3><ol class="steps"><li>Zahl durch 2 teilen.</li><li>Rest 0 oder 1 notieren.</li><li>Mit dem Quotienten weiterrechnen.</li><li>Reste von unten nach oben lesen.</li></ol><div class="formula">23 ÷ 2 = 11 Rest 1<br>11 ÷ 2 = 5 Rest 1<br>5 ÷ 2 = 2 Rest 1<br>2 ÷ 2 = 1 Rest 0<br>1 ÷ 2 = 0 Rest 1<br>→ 10111₂</div></article>
+        <article class="card wide"><span class="tag">Basis 16</span><h3>Das Hexadezimalsystem</h3><p>Hex verwendet 0–9 und A–F, wobei A=10 bis F=15. Genau <b>4 Bits</b> bilden eine Hex-Ziffer. Binärzahlen deshalb von rechts in Vierergruppen teilen; links bei Bedarf mit Nullen auffüllen.</p><div class="formula">A9E₁₆ → 1010 1001 1110₂<br>2A₁₆ → 0010 1010₂<br>1110 1101₂ → ED₁₆<br>3F₁₆ = 3×16 + 15 = 63₁₀</div></article>
+        <article class="card"><span class="tag">Addition</span><h3>Binär addieren</h3><div class="rules"><div class="rule">0+0=0</div><div class="rule">0+1=1</div><div class="rule">1+1=10</div><div class="rule">1+1+1=11</div></div><p>Von rechts nach links rechnen. Bei 1+1 wird 0 geschrieben und 1 übertragen – genau wie der Zehnerübertrag im Dezimalsystem.</p><div class="formula">  110101<br>+ 001111<br>────────<br> 1000100</div></article>
+        <article class="card"><span class="tag">Multiplikation</span><h3>Binär multiplizieren</h3><p>Bei einer 1 im Multiplikator schreibst du die Zahl verschoben auf; bei 0 eine Nullzeile. Anschliessend addierst du die Teilprodukte.</p><div class="formula">   1011 × 101<br>   1011<br>  0000<br> 1011<br>───────<br>110111</div></article>
+      </div>
+    </section>
+
+    <section class="view" id="uebungen">
+      <div class="section-head"><h2>Rechnen statt raten.</h2><p>Gib Ergebnis und Lösungsweg ein. Die App prüft beides und erklärt Fehler.</p></div>
+      <div class="practice-panel">
+        <div class="practice-top">
+          <div class="control"><label for="topic">Aufgabentyp</label><select id="topic"><option value="dec-bin">Dezimal → Binär</option><option value="bin-dec">Binär → Dezimal</option><option value="dec-bin-hex">Dezimal → Binär → Hex</option><option value="hex-bin-dec">Hex → Binär → Dezimal</option><option value="add">Binär addieren</option><option value="mul">Binär multiplizieren</option><option value="mix">Gemischt</option></select></div>
+          <div class="control"><label for="level">Schwierigkeit</label><select id="level"><option value="1">Standard</option><option value="2">Schwierig</option><option value="3">Prüfungsmodus</option></select></div>
+          <div class="spacer"></div><div class="score">✓ <span id="score">0</span> / <span id="attempts">0</span></div>
+        </div>
+        <div class="exercise">
+          <div class="exercise-header"><div><span class="tag" id="taskTag">Umwandlung</span><h3 id="taskTitle">Aufgabe</h3><div class="prompt" id="taskPrompt"></div></div><button class="icon-btn" id="newTask" title="Neue Aufgabe">↻ Neu</button></div>
+          <div class="workspace" id="workspace"></div>
+          <div class="feedback" id="feedback"><strong id="feedbackTitle"></strong><div id="feedbackText"></div><div class="solution" id="solution"></div></div>
+          <div class="actions"><button class="primary" id="check">Korrigieren</button><button class="secondary" id="hint">Hinweis</button><button class="secondary" id="showSolution">Lösung zeigen</button></div>
+        </div>
+      </div>
+    </section>
+    <footer>Erstellt zum Üben der Zahlensysteme · Fortschritt wird nur auf diesem Gerät gespeichert.</footer>
+  </div>
+<script>
+(()=>{
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const state={task:null,score:+localStorage.getItem('zs-score')||0,attempts:+localStorage.getItem('zs-attempts')||0,solved:new Set()};
+  const names={'dec-bin':'Dezimal → Binär','bin-dec':'Binär → Dezimal','dec-bin-hex':'Dezimal → Binär → Hex','hex-bin-dec':'Hex → Binär → Dezimal','add':'Binäraddition','mul':'Binärmultiplikation'};
+  function nav(id){$$('.view').forEach(v=>v.classList.toggle('active',v.id===id));$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));scrollTo({top:0,behavior:'smooth'});if(id==='uebungen'&&!state.task)newTask()}
+  $$('.nav button').forEach(b=>b.onclick=()=>nav(b.dataset.view));$$('[data-go]').forEach(b=>b.onclick=()=>nav(b.dataset.go));
+  $('#theme').onclick=()=>{const d=document.documentElement;const next=d.dataset.theme==='dark'?'light':'dark';d.dataset.theme=next;localStorage.setItem('zs-theme',next)};document.documentElement.dataset.theme=localStorage.getItem('zs-theme')||'light';
+  function stats(){ $('#score').textContent=state.score;$('#attempts').textContent=state.attempts;$('#progressText').textContent=`${state.score} richtig gelöst`;$('#progressBar').style.width=Math.min(100,state.score*5)+'%'}stats();
+  const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a; const bin=n=>n.toString(2);const hex=n=>n.toString(16).toUpperCase();
+  function pickType(){const v=$('#topic').value;if(v!=='mix')return v;return ['dec-bin','bin-dec','dec-bin-hex','hex-bin-dec','add','mul'][rnd(0,5)]}
+  function makeTask(type,lvl){let max=lvl===1?63:lvl===2?255:1023,a,b,n,h;
+    if(type==='dec-bin'){n=rnd(lvl===1?20:64,max);return{type,n,answer:bin(n),prompt:`Wandle ${n}₁₀ in eine Binärzahl um.`,hint:'Teile wiederholt durch 2 und lies die Reste von unten nach oben.'}}
+    if(type==='bin-dec'){n=rnd(lvl===1?32:96,max);return{type,n,answer:String(n),given:bin(n),prompt:`Wandle ${bin(n)}₂ in eine Dezimalzahl um.`,hint:'Addiere alle Zweierpotenzen, über denen eine 1 steht.'}}
+    if(type==='dec-bin-hex'){n=rnd(lvl===1?100:256,lvl===1?255:lvl===2?1023:4095);return{type,n,answer:hex(n),bin:bin(n),prompt:`Wandle ${n}₁₀ zuerst in Binär und danach in Hexadezimal um.`,hint:'Bestimme zuerst die Binärzahl und teile sie dann von rechts in Vierergruppen.'}}
+    if(type==='hex-bin-dec'){n=rnd(lvl===1?160:256,lvl===1?511:lvl===2?2047:65535);h=hex(n);return{type,n,h,answer:String(n),bin:bin(n).padStart(h.length*4,'0'),prompt:`Wandle ${h}₁₆ zuerst in Binär und danach in Dezimal um.`,hint:'Übersetze jede Hex-Ziffer einzeln in genau vier Bits.'}}
+    if(type==='add'){a=rnd(lvl===1?20:64,max);b=rnd(lvl===1?10:32,max);return{type,a,b,answer:bin(a+b),prompt:`Addiere ${bin(a)}₂ + ${bin(b)}₂ schriftlich.`,hint:'Rechne von rechts. Ab 2 schreibst du das Ergebnisbit und überträgst 1.'}}
+    a=rnd(lvl===1?5:15,lvl===1?15:lvl===2?31:63);b=rnd(lvl===1?3:9,lvl===1?7:lvl===2?15:31);return{type,a,b,answer:bin(a*b),prompt:`Multipliziere ${bin(a)}₂ × ${bin(b)}₂ schriftlich.`,hint:'Für jede 1 entsteht eine nach links verschobene Kopie des Multiplikanden.'}}
+  function mini(label,id,placeholder=''){return`<div class="mini-field"><label for="${id}">${label}</label><input id="${id}" autocomplete="off" placeholder="${placeholder}"></div>`}
+  function digitBoard(t){let rows=[],cols=Math.max(t.answer.length,bin(t.a).length,bin(t.b).length)+1;if(t.type==='add')rows=[['Überträge','carry'],[bin(t.a),'fixed'],[bin(t.b),'fixed'],['Ergebnis','result']];else{let bb=bin(t.b);rows=[...bb.split('').reverse().map((d,i)=>[`Teilprodukt ${i+1}`,`part-${i}`]),['Ergebnis','result']]}return`<div class="workbox"><h4>Schriftliches Arbeitsfeld</h4><div class="digit-board" style="--cols:${cols}">${rows.map((r,ri)=>`<div class="digit-row ${r[1]==='result'?'result':''}"><span>${r[1]==='fixed'?(ri===2?'+':''):r[0]}</span>${r[1]==='fixed'?('<span></span>'.repeat(cols-r[0].length)+r[0].split('').map(x=>`<span>${x}</span>`).join('')):Array.from({length:cols},(_,i)=>`<input inputmode="numeric" maxlength="1" aria-label="${r[0]} Stelle ${i+1}" data-row="${r[1]}" data-i="${i}">`).join('')}</div>`).join('')}</div><small>Du kannst jede Ziffer, jeden Übertrag und jedes Teilprodukt einzeln eintragen.</small></div>`}
+  function render(){const t=state.task;$('#taskTag').textContent=names[t.type];$('#taskTitle').textContent=names[t.type];$('#taskPrompt').textContent=t.prompt;let html='';
+    if(t.type==='dec-bin') html=`<div class="workbox"><h4>Divisionen durch 2</h4><div class="field-grid">${Array.from({length:bin(t.n).length},(_,i)=>mini(`Rest ${i+1}`,`rest${i}`,'0 oder 1')).join('')}</div></div><div class="answer-row"><input class="answer" id="answer" inputmode="numeric" placeholder="Binärzahl"><span class="suffix">₂</span></div>`;
+    if(t.type==='bin-dec') html=`<div class="workbox"><h4>Aktive Stellenwerte</h4><div class="field-grid">${t.given.split('').map((d,i)=>mini(`${d} × 2^${t.given.length-1-i}`,`place${i}`,'Teilwert')).join('')}</div></div><div class="answer-row"><input class="answer" id="answer" inputmode="numeric" placeholder="Dezimalzahl"><span class="suffix">₁₀</span></div>`;
+    if(t.type==='dec-bin-hex') html=`<div class="workbox"><h4>Zwischenschritt erforderlich</h4><div class="field-grid">${mini('Binärzahl','binary','z. B. 101011')}${mini('4er-Gruppen','groups','z. B. 0010 1011')}</div></div><div class="answer-row"><input class="answer" id="answer" placeholder="Hexadezimalzahl"><span class="suffix">₁₆</span></div>`;
+    if(t.type==='hex-bin-dec') html=`<div class="workbox"><h4>Jede Hex-Ziffer in 4 Bits</h4><div class="field-grid">${t.h.split('').map((x,i)=>mini(`${x}₁₆`, `nibble${i}`,'4 Bits')).join('')}</div></div><div class="answer-row"><input class="answer" id="binary" inputmode="numeric" placeholder="Binärzahl"><span class="suffix">₂</span><input class="answer" id="answer" inputmode="numeric" placeholder="Dezimalzahl"><span class="suffix">₁₀</span></div>`;
+    if(t.type==='add'||t.type==='mul') html=digitBoard(t)+`<div class="answer-row"><input class="answer" id="answer" inputmode="numeric" placeholder="Endergebnis"><span class="suffix">₂</span></div>`;
+    $('#workspace').innerHTML=html;$('#feedback').className='feedback';$('#solution').classList.remove('show');
+    $$('.digit-row input').forEach((el,i,all)=>el.oninput=()=>{el.value=el.value.replace(/[^01]/g,'').slice(-1);if(el.value){const j=all.indexOf(el);all[j+1]?.focus()}});$('#answer')?.focus();
+  }
+  function newTask(){let type=pickType();state.task={...makeTask(type,+$('#level').value),id:Date.now()+Math.random()};render()}
+  function norm(v){return String(v||'').toUpperCase().replace(/[\s_]/g,'').replace(/[₂₁₀₆]/g,'')}
+  function rowValue(kind){return $$('.digit-row input').filter(x=>x.dataset.row===kind).map(x=>x.value||'').join('').replace(/^0+/,'')||'0'}
+  function solution(t){if(t.type==='dec-bin'){let n=t.n,lines=[];while(n){lines.push(`${n} ÷ 2 = ${Math.floor(n/2)} Rest ${n%2}`);n=Math.floor(n/2)}return lines.join('\n')+`\nReste von unten nach oben: ${t.answer}₂`}
+    if(t.type==='bin-dec')return t.given.split('').map((d,i)=>`${d} × 2^${t.given.length-1-i} = ${d*(2**(t.given.length-1-i))}`).join('\n')+`\nSumme = ${t.answer}₁₀`;
+    if(t.type==='dec-bin-hex')return`${t.n}₁₀ = ${t.bin}₂\n4er-Gruppen: ${t.bin.padStart(Math.ceil(t.bin.length/4)*4,'0').match(/.{4}/g).join(' ')}\nErgebnis: ${t.answer}₁₆`;
+    if(t.type==='hex-bin-dec')return`${t.h}₁₆ = ${t.bin.match(/.{4}/g).join(' ')}₂\n= ${t.h.split('').map((x,i)=>`${parseInt(x,16)}×16^${t.h.length-1-i}`).join(' + ')}\n= ${t.answer}₁₀`;
+    if(t.type==='add')return`  ${bin(t.a)}₂\n+ ${bin(t.b)}₂\n= ${t.answer}₂  (${t.a} + ${t.b} = ${t.a+t.b})`;
+    return`${bin(t.a)}₂ × ${bin(t.b)}₂\nTeilprodukte: ${bin(t.b).split('').reverse().map((d,i)=>d==='1'?bin(t.a<<i):'0').join(', ')}\nErgebnis: ${t.answer}₂  (${t.a} × ${t.b} = ${t.a*t.b})`}
+  function check(){const t=state.task,ans=norm($('#answer')?.value),expected=norm(t.answer);let ok=ans===expected,details=[];
+    if(t.type==='dec-bin'){let n=t.n,i=0;while(n){const got=norm($(`#rest${i}`)?.value),exp=String(n%2);if(got!==exp)details.push(`Rest ${i+1} ist ${exp}.`);n=Math.floor(n/2);i++}if(details.length)ok=false}
+    if(t.type==='bin-dec'){t.given.split('').forEach((d,i)=>{let exp=String(d*(2**(t.given.length-1-i)));if(norm($(`#place${i}`)?.value)!==exp)details.push(`Teilwert bei 2^${t.given.length-1-i}: ${exp}.`)});if(details.length)ok=false}
+    if(t.type==='dec-bin-hex'){if(norm($('#binary').value)!==norm(t.bin)){details.push(`Der Binär-Zwischenschritt stimmt noch nicht.`);ok=false}if(!norm($('#groups').value).endsWith(norm(t.bin))){details.push('Prüfe deine 4er-Gruppen.');ok=false}}
+    if(t.type==='hex-bin-dec'){let bits=t.h.split('').map(x=>parseInt(x,16).toString(2).padStart(4,'0'));bits.forEach((x,i)=>{if(norm($(`#nibble${i}`).value)!==x){details.push(`${t.h[i]} entspricht ${x}.`);ok=false}});if(norm($('#binary').value)!==norm(t.bin)){details.push('Die zusammengesetzte Binärzahl ist falsch.');ok=false}}
+    if(t.type==='add'||t.type==='mul'){let grid=rowValue('result');if(grid!==expected){details.push('Das Ergebnis im schriftlichen Arbeitsfeld stimmt nicht mit dem korrekten Resultat überein.');ok=false}}
+    if(t.type==='mul'){bin(t.b).split('').reverse().forEach((d,i)=>{const exp=d==='1'?bin(t.a<<i):'0';if(rowValue(`part-${i}`)!==exp){details.push(`Teilprodukt ${i+1} muss ${exp} sein.`);ok=false}})}
+    if(!ans)details.unshift('Trage ein Endergebnis ein.');
+    if(!state.solved.has(t.id)){state.attempts++;if(ok){state.score++;state.solved.add(t.id)}localStorage.setItem('zs-score',state.score);localStorage.setItem('zs-attempts',state.attempts);stats()}
+    const f=$('#feedback');f.className='feedback show '+(ok?'good':'bad');$('#feedbackTitle').textContent=ok?'Richtig – sauber gelöst!':'Noch nicht ganz richtig.';$('#feedbackText').textContent=ok?'Ergebnis und verlangter Lösungsweg stimmen. Du kannst direkt eine neue Aufgabe lösen.':(ans!==expected?`Das Endergebnis ist noch nicht korrekt. ${details.join(' ')}`:details.join(' '));$('#solution').textContent=solution(t);if(ok)setTimeout(newTask,1100)
+  }
+  $('#check').onclick=check;$('#newTask').onclick=newTask;$('#topic').onchange=newTask;$('#level').onchange=newTask;$('#hint').onclick=()=>{const f=$('#feedback');f.className='feedback show';$('#feedbackTitle').textContent='Hinweis';$('#feedbackText').textContent=state.task.hint;$('#solution').classList.remove('show')};$('#showSolution').onclick=()=>{const f=$('#feedback');f.className='feedback show';$('#feedbackTitle').textContent='Vollständiger Lösungsweg';$('#feedbackText').textContent='Vergleiche jeden Schritt mit deiner Eingabe.';$('#solution').textContent=solution(state.task);$('#solution').classList.add('show')};
+  document.addEventListener('keydown',e=>{if(e.key==='Enter'&&$('#uebungen').classList.contains('active'))check()});
+})();
+</script>
+</body>
+</html>
