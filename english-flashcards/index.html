@@ -508,9 +508,10 @@
 
     <div class="side-card">
       <div class="side-title">Lerninhalt</div>
-      <div class="tiny">Wähle aus, ob alle Begriffe oder nur Verben beim Üben und Testen erscheinen.</div>
+      <div class="tiny">Wähle aus, ob alle Begriffe, nur Verben oder nur Adjektive beim Üben und Testen erscheinen.</div>
       <button class="btn mode-btn" id="verbsOnlyBtn">Nur Verben lernen</button>
-      <div class="marked-count" id="verbCount"></div>
+      <button class="btn mode-btn" id="adjectivesOnlyBtn">Nur Adjektive lernen</button>
+      <div class="marked-count" id="wordTypeCount"></div>
     </div>
 
     <div class="side-card">
@@ -547,11 +548,21 @@ const verbTerms = new Set([
   "turn to", "ask after", "rush", "collaborate", "conceive"
 ]);
 
+const adjectiveTerms = new Set([
+  "odd", "aggressive", "considerate", "definite", "dependable", "energetic",
+  "laid-back", "outgoing", "unreliable", "ambitious", "conservative",
+  "decisive", "diverse", "instinctive", "instructive", "thankful",
+  "vulnerable", "conscious", "curious", "ethnic", "faithful", "mutual",
+  "comprehensive", "definitive", "emotionally charged", "external",
+  "frustrating", "hand-drawn", "impersonal", "internal", "labour intensive",
+  "laborious", "shameful"
+]);
+
 let index = 0;
 let frontLanguage = "en";
 let testMode = false;
 let learnMarkedOnly = false;
-let verbsOnly = false;
+let wordType = "all";
 let evaluated = false;
 let stats = { correct: 0, wrong: 0 };
 let marked = new Set(JSON.parse(localStorage.getItem("flashcards-marked") || "[]"));
@@ -565,7 +576,9 @@ const sceneEl = document.querySelector(".scene");
 function activeIndexes() {
   return cards.map((_, i) => i).filter(i =>
     (!learnMarkedOnly || marked.has(i)) &&
-    (!verbsOnly || verbTerms.has(cards[i][0]))
+    (wordType === "all" ||
+      (wordType === "verbs" && verbTerms.has(cards[i][0])) ||
+      (wordType === "adjectives" && adjectiveTerms.has(cards[i][0])))
   );
 }
 
@@ -601,9 +614,9 @@ function updateMarkedUI() {
   $("learnMarkedBtn").classList.toggle("active", learnMarkedOnly);
   $("learnMarkedBtn").textContent = learnMarkedOnly ? "Alle Karten lernen" : "Learn marked";
 
-  $("verbsOnlyBtn").classList.toggle("active", verbsOnly);
-  $("verbsOnlyBtn").textContent = verbsOnly ? "Alle Begriffe lernen" : "Nur Verben lernen";
-  $("verbCount").textContent = `${verbTerms.size} Verben verfügbar`;
+  $("verbsOnlyBtn").classList.toggle("active", wordType === "verbs");
+  $("adjectivesOnlyBtn").classList.toggle("active", wordType === "adjectives");
+  $("wordTypeCount").textContent = `${verbTerms.size} Verben · ${adjectiveTerms.size} Adjektive`;
 }
 
 function normalize(s) {
@@ -676,7 +689,8 @@ function render(options = {}) {
   $("sideInfo").textContent =
     (frontLanguage === "en" ? "English → Deutsch" : "Deutsch → English") +
     (learnMarkedOnly ? " · Marked" : "") +
-    (verbsOnly ? " · Nur Verben" : "");
+    (wordType === "verbs" ? " · Nur Verben" : "") +
+    (wordType === "adjectives" ? " · Nur Adjektive" : "");
   $("counter").textContent = `${index + 1} / ${active.length}`;
   $("progressBar").style.width = `${((index + 1) / active.length) * 100}%`;
 
@@ -811,7 +825,13 @@ $("learnMarkedBtn").addEventListener("click", () => {
 });
 
 $("verbsOnlyBtn").addEventListener("click", () => {
-  verbsOnly = !verbsOnly;
+  wordType = wordType === "verbs" ? "all" : "verbs";
+  index = 0;
+  render();
+});
+
+$("adjectivesOnlyBtn").addEventListener("click", () => {
+  wordType = wordType === "adjectives" ? "all" : "adjectives";
   index = 0;
   render();
 });
