@@ -508,8 +508,7 @@
 
     <div class="side-card">
       <div class="side-title">Lerninhalt</div>
-      <div class="tiny">Wähle aus, ob alle Begriffe, nur Verben oder nur Adjektive beim Üben und Testen erscheinen.</div>
-      <button class="btn mode-btn" id="verbsOnlyBtn">Nur Verben lernen</button>
+      <div class="tiny">Wähle aus, ob alle Begriffe oder nur Adjektive beim Üben und Testen erscheinen.</div>
       <button class="btn mode-btn" id="adjectivesOnlyBtn">Nur Adjektive lernen</button>
       <div class="marked-count" id="wordTypeCount"></div>
     </div>
@@ -542,12 +541,6 @@
 <script>
 const cards = [["brother-in-law", "Schwager"], ["fiancée", "Verlobte"], ["landlord", "Vermieter"], ["mountaineer", "Bergsteiger"], ["odd", "seltsam, sonderbar"], ["occasionally", "gelegentlich"], ["aggressive", "aggressiv"], ["clique", "Clique"], ["cooperate", "kooperieren"], ["considerate", "rücksichtsvoll"], ["definite", "bestimmt"], ["dependable", "verlässlich"], ["energetic", "energisch"], ["get on with", "mit jmd. auskommen"], ["go round to", "jmd. besuchen"], ["hang out with", "Zeit mit jmd. verbringen"], ["intrigue", "neugierig machen"], ["keep up with", "Kontakt halten"], ["laid-back", "gelassen"], ["outgoing", "kontaktfreudig"], ["personality", "Persönlichkeit"], ["profile", "Profil"], ["unreliable", "unzuverlässig"], ["stand by", "zu jmd. stehen"], ["survival", "Überleben"], ["agriculture", "Landwirtschaft"], ["ambitious", "ambitioniert"], ["aptitude", "Eignung"], ["attention span", "Aufmerksamkeitsspanne"], ["conservative", "konservativ"], ["counselling", "Beratung, Therapie"], ["decisive", "entscheidend"], ["digital natives", "Digital Native"], ["diverse", "vielfältig, divers"], ["empathy", "Empathie"], ["enthusiasm", "Begeisterung"], ["equation", "Gleichung"], ["financial insecurity", "finanzielle Unsicherheit"], ["instinctive", "instinktiv"], ["instructive", "lehrreich"], ["thankful", "dankbar"], ["upbringing", "Erziehung"], ["vulnerable", "verletzlich"], ["ancestor", "Vorfahre"], ["ancestral roots", "angestammte Wurzeln"], ["approval", "Zustimmung"], ["characteristic", "Eigenschaft"], ["conscious", "bewusst"], ["curious", "neugierig"], ["descendant", "Nachkomme"], ["emigrate", "auswandern"], ["ethnic", "ethnisch"], ["free spirit", "Freigeist"], ["immigrant", "Einwanderer, Einwanderin"], ["inherit", "erben"], ["make sense", "Sinn machen"], ["melting pot", "Schmelztiegel"], ["sense of belonging", "Gefühl der Zugehörigkeit"], ["stepmother", "Stiefmutter"], ["trace", "verfolgen"], ["turn to", "sich an jmd. wenden"], ["ask after", "nach jmd. fragen"], ["faithful", "treu"], ["mutual", "gegenseitig"], ["rush", "eilen"], ["awareness", "Bewusstsein"], ["collaborate", "zusammenarbeiten"], ["comprehensive", "umfassend"], ["conceive", "konzipieren, begreifen"], ["correspondence", "Korrespondenz"], ["data", "Daten"], ["definitive", "endgültig, definitiv"], ["emotionally charged", "emotional geladen"], ["external", "extern"], ["frustrating", "frustrierend"], ["hand-drawn", "handgezeichnet"], ["impersonal", "unpersönlich"], ["indication", "Hinweis"], ["internal", "intern"], ["labour intensive", "arbeitsintensiv"], ["laborious", "mühselig, aufwendig"], ["metrics", "Metriken"], ["output", "Leistung, Ergebnis"], ["process", "Prozess"], ["revelation", "Enthüllung"], ["shameful", "schändlich"], ["surroundings", "Umgebung"], ["visualization", "Visualisierung"], ["support network", "unterstützendes Netzwerk"]];
 
-const verbTerms = new Set([
-  "cooperate", "get on with", "go round to", "hang out with", "intrigue",
-  "keep up with", "stand by", "emigrate", "inherit", "make sense", "trace",
-  "turn to", "ask after", "rush", "collaborate", "conceive"
-]);
-
 const adjectiveTerms = new Set([
   "odd", "aggressive", "considerate", "definite", "dependable", "energetic",
   "laid-back", "outgoing", "unreliable", "ambitious", "conservative",
@@ -577,7 +570,6 @@ function activeIndexes() {
   return cards.map((_, i) => i).filter(i =>
     (!learnMarkedOnly || marked.has(i)) &&
     (wordType === "all" ||
-      (wordType === "verbs" && verbTerms.has(cards[i][0])) ||
       (wordType === "adjectives" && adjectiveTerms.has(cards[i][0])))
   );
 }
@@ -614,9 +606,8 @@ function updateMarkedUI() {
   $("learnMarkedBtn").classList.toggle("active", learnMarkedOnly);
   $("learnMarkedBtn").textContent = learnMarkedOnly ? "Alle Karten lernen" : "Learn marked";
 
-  $("verbsOnlyBtn").classList.toggle("active", wordType === "verbs");
   $("adjectivesOnlyBtn").classList.toggle("active", wordType === "adjectives");
-  $("wordTypeCount").textContent = `${verbTerms.size} Verben · ${adjectiveTerms.size} Adjektive`;
+  $("wordTypeCount").textContent = `${adjectiveTerms.size} Adjektive verfügbar`;
 }
 
 function normalize(s) {
@@ -689,7 +680,6 @@ function render(options = {}) {
   $("sideInfo").textContent =
     (frontLanguage === "en" ? "English → Deutsch" : "Deutsch → English") +
     (learnMarkedOnly ? " · Marked" : "") +
-    (wordType === "verbs" ? " · Nur Verben" : "") +
     (wordType === "adjectives" ? " · Nur Adjektive" : "");
   $("counter").textContent = `${index + 1} / ${active.length}`;
   $("progressBar").style.width = `${((index + 1) / active.length) * 100}%`;
@@ -820,12 +810,6 @@ $("markBack").addEventListener("click", toggleMark);
 
 $("learnMarkedBtn").addEventListener("click", () => {
   learnMarkedOnly = !learnMarkedOnly;
-  index = 0;
-  render();
-});
-
-$("verbsOnlyBtn").addEventListener("click", () => {
-  wordType = wordType === "verbs" ? "all" : "verbs";
   index = 0;
   render();
 });
