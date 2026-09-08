@@ -401,6 +401,34 @@
     border-color: #f0c94f;
   }
 
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .mode-option {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px;
+    min-width: 0;
+  }
+
+  .mode-option .side-title {
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  .mode-option .tiny {
+    min-height: 54px;
+    font-size: 12px;
+  }
+
+  .mode-option .toggle {
+    margin-top: 10px;
+  }
+
   .mode-btn {
     width: 100%;
     margin-top: 12px;
@@ -497,12 +525,19 @@
 
   <aside>
     <div class="side-card">
-      <div class="toggle-row">
-        <div>
-          <div class="side-title" style="margin-bottom:4px">Test Mode</div>
+      <div class="side-title">Modus</div>
+      <div class="tiny">Testen oder gezielt lernen. Es kann immer nur ein Modus aktiv sein.</div>
+      <div class="mode-grid">
+        <div class="mode-option">
+          <div class="side-title">Test Mode</div>
           <div class="tiny">Antwort eintippen und beim Umdrehen prüfen.</div>
+          <div class="toggle" id="testToggle" role="switch" tabindex="0" aria-label="Test Mode" aria-checked="false"></div>
         </div>
-        <div class="toggle" id="testToggle" role="switch" aria-checked="false"></div>
+        <div class="mode-option">
+          <div class="side-title">Learn Mode</div>
+          <div class="tiny">Falsche Antworten werden automatisch mit ★ markiert.</div>
+          <div class="toggle" id="learnToggle" role="switch" tabindex="0" aria-label="Learn Mode" aria-checked="false"></div>
+        </div>
       </div>
     </div>
 
@@ -521,7 +556,7 @@
     </div>
 
     <div class="side-card">
-      <div class="side-title">Test-Statistik</div>
+      <div class="side-title">Antwort-Statistik</div>
       <div class="stat"><span>Richtig</span><strong id="correctStat">0</strong></div>
       <div class="stat"><span>Falsch</span><strong id="wrongStat">0</strong></div>
       <div class="stat"><span>Beantwortet</span><strong id="answeredStat">0</strong></div>
@@ -531,8 +566,9 @@
     <div class="side-card">
       <div class="side-title">So funktioniert's</div>
       <div class="tiny">
-        Ohne Test Mode: Karte einfach anklicken und umdrehen.<br><br>
-        Mit Test Mode: Antwort unten eingeben. Beim ersten Umdrehen wird sie automatisch geprüft.
+        Ohne Modus: Karte einfach anklicken und umdrehen.<br><br>
+        Mit Test Mode: Antwort unten eingeben. Beim ersten Umdrehen wird sie automatisch geprüft.<br><br>
+        Mit Learn Mode: Gleich wie im Test Mode, aber jede falsche Antwort markiert die Karte automatisch mit ★.
       </div>
     </div>
   </aside>
@@ -554,6 +590,7 @@ const adjectiveTerms = new Set([
 let index = 0;
 let frontLanguage = "de";
 let testMode = false;
+let learnMode = false;
 let learnMarkedOnly = false;
 let wordType = "all";
 let evaluated = false;
@@ -589,6 +626,30 @@ function applyTheme() {
   document.body.classList.toggle("dark", darkMode);
   $("themeToggle").setAttribute("aria-pressed", String(darkMode));
   $("themeToggle").textContent = darkMode ? "☀ Light Mode" : "☾ Dark Mode";
+}
+
+function answerModeActive() {
+  return testMode || learnMode;
+}
+
+function updateModeUI() {
+  $("testToggle").classList.toggle("on", testMode);
+  $("testToggle").setAttribute("aria-checked", String(testMode));
+  $("learnToggle").classList.toggle("on", learnMode);
+  $("learnToggle").setAttribute("aria-checked", String(learnMode));
+  $("answerBox").classList.toggle("show", answerModeActive());
+}
+
+function setMode(mode) {
+  if (mode === "test") {
+    testMode = !testMode;
+    if (testMode) learnMode = false;
+  } else if (mode === "learn") {
+    learnMode = !learnMode;
+    if (learnMode) testMode = false;
+  }
+  updateModeUI();
+  render();
 }
 
 function updateMarkedUI() {
@@ -680,7 +741,8 @@ function render(options = {}) {
   $("sideInfo").textContent =
     (frontLanguage === "en" ? "English → Deutsch" : "Deutsch → English") +
     (learnMarkedOnly ? " · Marked" : "") +
-    (wordType === "adjectives" ? " · Nur Adjektive" : "");
+    (wordType === "adjectives" ? " · Nur Adjektive" : "") +
+    (learnMode ? " · Learn Mode" : (testMode ? " · Test Mode" : ""));
   $("counter").textContent = `${index + 1} / ${active.length}`;
   $("progressBar").style.width = `${((index + 1) / active.length) * 100}%`;
 
@@ -691,7 +753,7 @@ function render(options = {}) {
   evaluated = false;
   updateMarkedUI();
 
-  if (testMode) setTimeout(() => answerInput.focus(), 80);
+  if (answerModeActive()) setTimeout(() => answerInput.focus(), 80);
 }
 
 function resetCardFace(instant = false) {
@@ -708,11 +770,12 @@ function setFrontLanguage(lang) {
 }
 
 function evaluate() {
-  if (!testMode || evaluated || !activeIndexes().length) return;
+  if (!answerModeActive() || evaluated || !activeIndexes().length) return;
 
   const typed = normalize(answerInput.value);
   const expected = expectedAnswer();
   const accepted = acceptedAnswers(expected);
+  const realIndex = currentCardIndex();
 
   evaluated = true;
   const ok = typed && accepted.has(typed);
@@ -723,7 +786,16 @@ function evaluate() {
     $("result").className = "result good";
   } else {
     stats.wrong++;
-    $("result").textContent = `✗ Falsch · Richtige Antwort: ${expected}`;
+
+    if (learnMode) {
+      marked.add(realIndex);
+      saveMarked();
+      $("result").textContent = `✗ Falsch · Automatisch markiert ★ · Richtige Antwort: ${expected}`;
+      updateMarkedUI();
+    } else {
+      $("result").textContent = `✗ Falsch · Richtige Antwort: ${expected}`;
+    }
+
     $("result").className = "result bad";
   }
   updateStats();
@@ -777,13 +849,17 @@ $("prevBtn").addEventListener("click", prev);
 $("nextBtn").addEventListener("click", next);
 cardEl.addEventListener("click", flipCard);
 
-$("testToggle").addEventListener("click", () => {
-  testMode = !testMode;
-  $("testToggle").classList.toggle("on", testMode);
-  $("testToggle").setAttribute("aria-checked", String(testMode));
-  $("answerBox").classList.toggle("show", testMode);
-  render();
-});
+$("testToggle").addEventListener("click", () => setMode("test"));
+$("learnToggle").addEventListener("click", () => setMode("learn"));
+
+for (const [id, mode] of [["testToggle", "test"], ["learnToggle", "learn"]]) {
+  $(id).addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.code === "Space") {
+      e.preventDefault();
+      setMode(mode);
+    }
+  });
+}
 
 function toggleMark(e) {
   e.stopPropagation();
@@ -832,7 +908,7 @@ answerInput.addEventListener("click", e => e.stopPropagation());
 document.addEventListener("keydown", (e) => {
   const typing = document.activeElement === answerInput;
 
-  if (e.key === "Enter" && testMode) {
+  if (e.key === "Enter" && answerModeActive()) {
     e.preventDefault();
     if (!cardEl.classList.contains("flipped")) {
       evaluate();
@@ -853,6 +929,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+updateModeUI();
 updateMarkedUI();
 applyTheme();
 render();
