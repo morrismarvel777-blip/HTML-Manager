@@ -796,7 +796,7 @@ function evaluate() {
   } else {
     stats.wrong++;
 
-    if (learnMode) {
+    if (learnMode || testMode) {
       marked.add(realIndex);
       saveMarked();
       $("result").textContent = `✗ Falsch · Automatisch markiert ★ · Richtige Antwort: ${expected}`;
