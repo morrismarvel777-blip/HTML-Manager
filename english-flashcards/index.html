@@ -782,7 +782,16 @@ function evaluate() {
 
   if (ok) {
     stats.correct++;
-    $("result").textContent = "✓ Richtig!";
+
+    if (testMode && marked.has(realIndex)) {
+      marked.delete(realIndex);
+      saveMarked();
+      updateMarkedUI();
+      $("result").textContent = "✓ Richtig! · Markierung automatisch entfernt ☆";
+    } else {
+      $("result").textContent = "✓ Richtig!";
+    }
+
     $("result").className = "result good";
   } else {
     stats.wrong++;
