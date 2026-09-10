@@ -588,6 +588,7 @@ const adjectiveTerms = new Set([
 ]);
 
 let index = 0;
+let displayedCardIndex = null;
 let frontLanguage = "de";
 let testMode = false;
 let learnMode = false;
@@ -652,8 +653,7 @@ function setMode(mode) {
   render();
 }
 
-function updateMarkedUI() {
-  const realIndex = currentCardIndex();
+function updateMarkedUI(realIndex = currentCardIndex()) {
   const isMarked = marked.has(realIndex);
 
   for (const id of ["markFront", "markBack"]) {
@@ -711,6 +711,7 @@ function render(options = {}) {
   const active = activeIndexes();
 
   if (!active.length) {
+    displayedCardIndex = null;
     $("frontText").textContent = "Keine passenden Karten";
     $("backText").textContent = learnMarkedOnly ? "Markiere passende Karten mit ☆" : "Ändere deine Auswahl";
     $("frontLabel").textContent = "Filter";
@@ -730,6 +731,7 @@ function render(options = {}) {
   if (index >= active.length) index = 0;
 
   const realIndex = active[index];
+  displayedCardIndex = realIndex;
   const [en, de] = cards[realIndex];
   const front = frontLanguage === "en" ? en : de;
   const back = frontLanguage === "en" ? de : en;
@@ -751,7 +753,7 @@ function render(options = {}) {
   $("result").textContent = "";
   $("result").className = "result";
   evaluated = false;
-  updateMarkedUI();
+  updateMarkedUI(realIndex);
 
   if (answerModeActive()) setTimeout(() => answerInput.focus(), 80);
 }
@@ -783,10 +785,10 @@ function evaluate() {
   if (ok) {
     stats.correct++;
 
-    if (testMode && marked.has(realIndex)) {
+    if ((testMode || learnMode) && marked.has(realIndex)) {
       marked.delete(realIndex);
       saveMarked();
-      updateMarkedUI();
+      updateMarkedUI(realIndex);
       $("result").textContent = "✓ Richtig! · Markierung automatisch entfernt ☆";
     } else {
       $("result").textContent = "✓ Richtig!";
@@ -800,7 +802,7 @@ function evaluate() {
       marked.add(realIndex);
       saveMarked();
       $("result").textContent = `✗ Falsch · Automatisch markiert ★ · Richtige Antwort: ${expected}`;
-      updateMarkedUI();
+      updateMarkedUI(realIndex);
     } else {
       $("result").textContent = `✗ Falsch · Richtige Antwort: ${expected}`;
     }
@@ -818,15 +820,29 @@ function flipCard() {
 
 function next() {
   const active = activeIndexes();
-  if (!active.length) return;
-  index = (index + 1) % active.length;
+  if (!active.length) {
+    render({ instantFace: true });
+    return;
+  }
+
+  // If the displayed card was just solved and removed from the marked queue,
+  // keep the same queue position because it now points to the next marked card.
+  if (learnMarkedOnly && displayedCardIndex !== null && !marked.has(displayedCardIndex)) {
+    if (index >= active.length) index = 0;
+  } else {
+    index = (index + 1) % active.length;
+  }
+
   render({ instantFace: true });
   animateCardChange("next");
 }
 
 function prev() {
   const active = activeIndexes();
-  if (!active.length) return;
+  if (!active.length) {
+    render({ instantFace: true });
+    return;
+  }
   index = (index - 1 + active.length) % active.length;
   render({ instantFace: true });
   animateCardChange("prev");
